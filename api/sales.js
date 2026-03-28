@@ -3,7 +3,7 @@
 
 const DATABASE_ID = process.env.NOTION_DATABASE_ID || '3188b289e31a81ff9f04000bdcab600e';
 
-export default async function handler(req, res) {
+module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET');
   res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
