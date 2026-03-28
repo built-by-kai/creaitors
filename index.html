@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Executive Dashboard — Creaitors Official</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Inter', -apple-system, sans-serif;
+    background: #0F0F0F;
+    color: #E8E8E8;
+    padding: 20px;
+  }
+  .dashboard { max-width: 1200px; margin: 0 auto; }
+
+  /* Loading */
+  .loading {
+    display: flex; align-items: center; justify-content: center;
+    height: 300px; flex-direction: column; gap: 16px;
+  }
+  .spinner {
+    width: 32px; height: 32px;
+    border: 3px solid rgba(255,255,255,0.08);
+    border-top-color: #10B981;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .loading-text { font-size: 12px; color: #555; }
+
+  /* Header */
+  .header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 24px; padding-bottom: 16px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+  .header-left { display: flex; align-items: center; gap: 14px; }
+  .header-icon {
+    width: 44px; height: 44px;
+    background: linear-gradient(135deg, #10B981, #059669);
+    border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 22px;
+  }
+  .header h1 { font-size: 20px; font-weight: 800; color: #fff; letter-spacing: -0.5px; }
+  .header-sub { font-size: 12px; color: #666; font-weight: 500; margin-top: 2px; }
+  .live-badge {
+    display: flex; align-items: center; gap: 6px;
+    background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.2);
+    padding: 6px 14px; border-radius: 20px; font-size: 11px; font-weight: 600; color: #10B981;
+  }
+  .live-dot {
+    width: 6px; height: 6px; background: #10B981; border-radius: 50%;
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:0.3; } }
+
+  /* Stat Cards */
+  .stat-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 20px; }
+  .stat-card {
+    background: #1A1A1A; border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 16px; padding: 20px; position: relative; overflow: hidden;
+    transition: border-color 0.2s, transform 0.15s;
+  }
+  .stat-card:hover { border-color: rgba(255,255,255,0.12); transform: translateY(-1px); }
+  .stat-card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    border-radius: 16px 16px 0 0;
+  }
+  .stat-card.green::before { background: linear-gradient(90deg, #10B981, #34D399); }
+  .stat-card.yellow::before { background: linear-gradient(90deg, #F59E0B, #FBBF24); }
+  .stat-card.red::before { background: linear-gradient(90deg, #EF4444, #F87171); }
+  .stat-card.blue::before { background: linear-gradient(90deg, #3B82F6, #60A5FA); }
+
+  .stat-icon {
+    width: 36px; height: 36px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; margin-bottom: 14px;
+  }
+  .stat-card.green .stat-icon { background: rgba(16,185,129,0.12); }
+  .stat-card.yellow .stat-icon { background: rgba(245,158,11,0.12); }
+  .stat-card.red .stat-icon { background: rgba(239,68,68,0.12); }
+  .stat-card.blue .stat-icon { background: rgba(59,130,246,0.12); }
+
+  .stat-label {
+    font-size: 11px; font-weight: 600; color: #888;
+    text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 8px;
+  }
+  .stat-value {
+    font-size: 36px; font-weight: 900; color: #fff;
+    letter-spacing: -1.5px; line-height: 1;
+  }
+  .stat-sub { font-size: 12px; color: #555; margin-top: 8px; font-weight: 500; }
+  .stat-sub span.green { color: #10B981; }
+  .stat-sub span.yellow { color: #F59E0B; }
+  .stat-sub span.red { color: #EF4444; }
+  .stat-sub span.blue { color: #3B82F6; }
+
+  /* Deal Lists */
+  .lists-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 20px; }
+  .list-card {
+    background: #1A1A1A; border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 16px; padding: 20px; max-height: 320px; overflow-y: auto;
+  }
+  .list-card::-webkit-scrollbar { width: 4px; }
+  .list-card::-webkit-scrollbar-track { background: transparent; }
+  .list-card::-webkit-scrollbar-thumb { background: #333; border-radius: 2px; }
+
+  .list-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 14px; padding-bottom: 10px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+  .list-title { font-size: 13px; font-weight: 700; color: #fff; }
+  .list-badge {
+    font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 6px;
+    text-transform: uppercase; letter-spacing: 0.5px;
+  }
+  .list-badge.red { background: rgba(239,68,68,0.15); color: #EF4444; }
+  .list-badge.yellow { background: rgba(245,158,11,0.15); color: #F59E0B; }
+  .list-badge.green { background: rgba(16,185,129,0.15); color: #10B981; }
+
+  .deal-item {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.03);
+  }
+  .deal-item:last-child { border-bottom: none; }
+  .deal-name { font-size: 13px; font-weight: 600; color: #ddd; }
+  .deal-company { font-size: 11px; color: #666; margin-top: 2px; }
+  .deal-value {
+    font-size: 13px; font-weight: 700; color: #fff;
+    white-space: nowrap; padding-left: 12px;
+  }
+  .deal-stage {
+    font-size: 9px; font-weight: 600; padding: 2px 6px; border-radius: 4px;
+    text-transform: uppercase; letter-spacing: 0.3px; margin-top: 3px; display: inline-block;
+  }
+
+  .empty-state {
+    text-align: center; padding: 24px; color: #444; font-size: 12px;
+  }
+
+  /* Funnel Bar */
+  .funnel-card {
+    background: #1A1A1A; border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 16px; padding: 20px; margin-bottom: 20px;
+  }
+  .funnel-title { font-size: 13px; font-weight: 700; color: #fff; margin-bottom: 14px; }
+  .funnel-bar-row { display: flex; gap: 4px; height: 36px; border-radius: 8px; overflow: hidden; }
+  .funnel-segment {
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px; font-weight: 700; color: #fff;
+    transition: flex 0.6s ease; min-width: 30px; position: relative;
+  }
+  .funnel-segment:hover { opacity: 0.85; }
+  .funnel-legend { display: flex; gap: 16px; margin-top: 12px; flex-wrap: wrap; }
+  .legend-item { display: flex; align-items: center; gap: 6px; font-size: 11px; color: #888; }
+  .legend-dot { width: 8px; height: 8px; border-radius: 3px; flex-shrink: 0; }
+
+  /* Footer */
+  .footer {
+    text-align: center; margin-top: 20px; padding-top: 14px;
+    border-top: 1px solid rgba(255,255,255,0.04);
+    font-size: 10px; color: #333; letter-spacing: 1px; text-transform: uppercase;
+  }
+  .footer span { color: #10B981; }
+
+  /* Responsive */
+  @media (max-width: 900px) {
+    .stat-row { grid-template-columns: repeat(2, 1fr); }
+    .lists-row { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 500px) {
+    .stat-row { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="dashboard" id="dashboard">
+  <div class="loading" id="loading">
+    <div class="spinner"></div>
+    <div class="loading-text">Pulling data from Notion...</div>
+  </div>
+</div>
+
+<script>
+const FUNNEL_COLORS = {
+  'Lead': '#6B7280',
+  'Contacted': '#3B82F6',
+  'Qualified': '#8B5CF6',
+  'Proposal Sent': '#F59E0B',
+  'Negotiation': '#F97316',
+  'Closed-Won': '#10B981',
+  'Closed-Lost': '#EF4444',
+};
+
+function formatRM(n) {
+  if (n >= 1000000) return 'RM ' + (n / 1000000).toFixed(1) + 'M';
+  if (n >= 1000) return 'RM ' + (n / 1000).toFixed(1) + 'K';
+  return 'RM ' + n.toLocaleString();
+}
+
+function dealList(deals, emptyMsg) {
+  if (!deals || deals.length === 0) {
+    return '<div class="empty-state">' + emptyMsg + '</div>';
+  }
+  return deals.map(function(d) {
+    return '<div class="deal-item"><div><div class="deal-name">' + escHtml(d.name || 'Untitled') + '</div>' +
+      (d.company ? '<div class="deal-company">' + escHtml(d.company) + '</div>' : '') +
+      (d.funnel ? '<div class="deal-stage" style="background:' + (FUNNEL_COLORS[d.funnel] || '#555') + '22; color:' + (FUNNEL_COLORS[d.funnel] || '#888') + ';">' + escHtml(d.funnel) + '</div>' : '') +
+      '</div><div class="deal-value">' + (d.value ? formatRM(d.value) : '-') + '</div></div>';
+  }).join('');
+}
+
+function escHtml(s) {
+  var d = document.createElement('div');
+  d.textContent = s;
+  return d.innerHTML;
+}
+
+function render(s) {
+  var funnelTotal = Object.values(s.funnelCounts).reduce(function(a, b) { return a + b; }, 0) || 1;
+  var funnelSegments = '';
+  var funnelLegend = '';
+  var funnelOrder = ['Lead', 'Contacted', 'Qualified', 'Proposal Sent', 'Negotiation', 'Closed-Won', 'Closed-Lost'];
+
+  funnelOrder.forEach(function(stage) {
+    var count = s.funnelCounts[stage] || 0;
+    if (count === 0) return;
+    var pct = (count / funnelTotal) * 100;
+    var color = FUNNEL_COLORS[stage] || '#555';
+    funnelSegments += '<div class="funnel-segment" style="flex:' + pct + '; background:' + color + ';" title="' + stage + ': ' + count + '">' + count + '</div>';
+    funnelLegend += '<div class="legend-item"><div class="legend-dot" style="background:' + color + ';"></div>' + stage + ' (' + count + ')</div>';
+  });
+
+  document.getElementById('dashboard').innerHTML =
+    '<div class="header"><div class="header-left"><div class="header-icon">\uD83D\uDCBC</div><div><h1>Executive Dashboard</h1><div class="header-sub">Sales CRM \u2014 ' + escHtml(s.month) + '</div></div></div><div class="live-badge"><div class="live-dot"></div>LIVE</div></div>' +
+
+    '<div class="stat-row">' +
+    '<div class="stat-card green"><div class="stat-icon">\u2705</div><div class="stat-label">Active Deals</div><div class="stat-value">' + s.activeDeals.count + '</div><div class="stat-sub">Pipeline: <span class="green">' + formatRM(s.activeDeals.totalValue) + '</span></div></div>' +
+    '<div class="stat-card yellow"><div class="stat-icon">\uD83C\uDFC6</div><div class="stat-label">Won This Month</div><div class="stat-value">' + s.wonThisMonth.count + '</div><div class="stat-sub">Revenue: <span class="yellow">' + formatRM(s.wonThisMonth.totalValue) + '</span></div></div>' +
+    '<div class="stat-card red"><div class="stat-icon">\u26A0\uFE0F</div><div class="stat-label">Retainer Unpaid</div><div class="stat-value">' + s.retainerUnpaid.count + '</div><div class="stat-sub"><span class="red">' + (s.retainerUnpaid.count > 0 ? 'Action needed' : 'All clear') + '</span></div></div>' +
+    '<div class="stat-card blue"><div class="stat-icon">\uD83D\uDCB3</div><div class="stat-label">KOL/Ads Unpaid</div><div class="stat-value">' + s.kolUnpaid.count + '</div><div class="stat-sub"><span class="blue">' + (s.kolUnpaid.count > 0 ? 'Deposits pending' : 'All clear') + '</span></div></div>' +
+    '</div>' +
+
+    '<div class="funnel-card"><div class="funnel-title">Sales Funnel Overview</div><div class="funnel-bar-row">' + (funnelSegments || '<div class="empty-state">No deals yet</div>') + '</div><div class="funnel-legend">' + funnelLegend + '</div></div>' +
+
+    '<div class="lists-row">' +
+    '<div class="list-card"><div class="list-header"><div class="list-title">\u26A0\uFE0F Retainer Unpaid</div><div class="list-badge red">' + s.retainerUnpaid.count + ' pending</div></div>' + dealList(s.retainerUnpaid.deals, 'All retainers paid \u2714') + '</div>' +
+    '<div class="list-card"><div class="list-header"><div class="list-title">\uD83D\uDCB3 KOL/Ads Deposit Unpaid</div><div class="list-badge yellow">' + s.kolUnpaid.count + ' pending</div></div>' + dealList(s.kolUnpaid.deals, 'All deposits collected \u2714') + '</div>' +
+    '</div>' +
+
+    '<div class="lists-row">' +
+    '<div class="list-card"><div class="list-header"><div class="list-title">\uD83C\uDFC6 Won This Month</div><div class="list-badge green">' + formatRM(s.wonThisMonth.totalValue) + '</div></div>' + dealList(s.wonThisMonth.deals, 'No deals closed this month yet') + '</div>' +
+    '<div class="list-card"><div class="list-header"><div class="list-title">\uD83D\uDCC8 Active Pipeline</div><div class="list-badge green">' + formatRM(s.activeDeals.totalValue) + '</div></div>' + dealList(s.activeDeals.deals, 'No active deals') + '</div>' +
+    '</div>' +
+
+    '<div class="footer">Executive Dashboard \u2014 <span>Creaitors Official</span></div>';
+}
+
+async function loadData() {
+  try {
+    var res = await fetch('/api/sales');
+    if (!res.ok) throw new Error('API error');
+    var data = await res.json();
+    render(data);
+  } catch (err) {
+    document.getElementById('dashboard').innerHTML =
+      '<div class="loading"><div style="font-size:14px; color:#EF4444; font-weight:600;">Could not load data</div><div style="font-size:12px; color:#555; max-width:400px; text-align:center; line-height:1.6;">Make sure NOTION_API_KEY and NOTION_DATABASE_ID are set in Vercel environment variables, and the integration has access to the database.</div></div>';
+  }
+}
+
+loadData();
+setInterval(loadData, 5 * 60 * 1000);
+</script>
+</body>
+</html>
