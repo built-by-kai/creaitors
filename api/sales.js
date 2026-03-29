@@ -1,7 +1,7 @@
 // Vercel Serverless Function — Fetches live data from Sales CRM - Pipeline
 // Environment variables: NOTION_API_KEY, NOTION_DATABASE_ID
 
-const DATABASE_ID = process.env.NOTION_DATABASE_ID || '3188b289e31a81ff9f04000bdcab600e';
+const DATABASE_ID = process.env.NOTION_DATABASE_ID || '3188b289e31a81da8939cb08d15be667';
 
 module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
