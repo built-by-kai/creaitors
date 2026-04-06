@@ -1,0 +1,1 @@
+{"version":2,"rewrites":[{"source":"/stats","destination":"/stats.html"},{"source":"/((?!api/|stats).*)", "destination":"/index.html"}]}

@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Creaitors · Team Stats</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #111;
+      min-height: 100vh;
+      padding: 28px 20px 60px;
+    }
+
+    .top {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 20px;
+    }
+    .brand { font-size: 11px; font-weight: 700; letter-spacing: 1.5px; color: #333; text-transform: uppercase; }
+    .refresh { background: none; border: none; color: #333; cursor: pointer; font-size: 16px; padding: 4px 8px; }
+    .refresh:hover { color: #888; }
+    .spin { animation: spin .7s linear infinite; display: inline-block; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+    }
+    @media (max-width: 1000px) { .grid { grid-template-columns: repeat(3, 1fr); } }
+    @media (max-width: 700px)  { .grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 420px)  { .grid { grid-template-columns: 1fr; } }
+
+    /* ── The box — matches screenshot exactly ── */
+    .box {
+      background: #1c1c24;
+      border-radius: 10px;
+      padding: 20px 18px 16px;
+      position: relative;
+      min-height: 110px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .box-top { display: flex; align-items: flex-start; justify-content: space-between; }
+
+    .box-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+      color: #555;
+      line-height: 1.3;
+      max-width: 80%;
+    }
+
+    .dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      margin-top: 3px;
+      flex-shrink: 0;
+    }
+    .dot.active   { background: #4ade80; box-shadow: 0 0 5px #4ade8088; }
+    .dot.inactive { background: #f87171; }
+    .dot.leave    { background: #fbbf24; box-shadow: 0 0 5px #fbbf2488; }
+
+    .box-value {
+      font-size: 36px;
+      font-weight: 700;
+      line-height: 1;
+      margin: 10px 0 6px;
+      letter-spacing: -1px;
+    }
+    .box-value.teal   { color: #2dd4bf; }
+    .box-value.green  { color: #4ade80; }
+    .box-value.yellow { color: #fbbf24; }
+    .box-value.blue   { color: #60a5fa; }
+    .box-value.purple { color: #c084fc; }
+    .box-value.red    { color: #f87171; }
+    .box-value.muted  { color: #333; }
+
+    .box-sub {
+      font-size: 11px;
+      color: #3a3a3a;
+    }
+
+    /* empty state */
+    .box-empty {
+      font-size: 11px;
+      color: #2e2e2e;
+      margin: 10px 0 6px;
+    }
+
+    /* loading */
+    .loading {
+      grid-column: 1/-1;
+      display: flex; align-items: center; justify-content: center;
+      gap: 10px; color: #333; padding: 80px; font-size: 12px;
+    }
+    .loader {
+      width: 18px; height: 18px;
+      border: 2px solid #222; border-top-color: #555;
+      border-radius: 50%; animation: spin .8s linear infinite;
+    }
+
+    .ts { font-size: 10px; color: #252525; text-align: right; margin-top: 10px; }
+  </style>
+</head>
+<body>
+
+<div class="top">
+  <span class="brand">Team Stats</span>
+  <button class="refresh" onclick="load()"><span id="ri">↻</span></button>
+</div>
+
+<div class="grid" id="grid">
+  <div class="loading"><div class="loader"></div> Loading…</div>
+</div>
+<div class="ts" id="ts"></div>
+
+<script>
+  const dotCls = s => s === 'Active' ? 'active' : s === 'Inactive' ? 'inactive' : 'leave';
+
+  function boxes(emp) {
+    const s = emp.stats;
+    const dc = dotCls(emp.status);
+    const role = [emp.role, emp.dept].filter(Boolean).join(' · ') || '—';
+
+    if (s.total === 0) {
+      return `
+        <div class="box">
+          <div class="box-top">
+            <div class="box-label">${emp.name}</div>
+            <div class="dot ${dc}"></div>
+          </div>
+          <div class="box-empty">No tasks assigned yet</div>
+          <div class="box-sub">${role}</div>
+        </div>`;
+    }
+
+    // Each employee gets 4 stat boxes side-by-side
+    const cards = [
+      { label: emp.name, val: s.done,       color: 'green',  sub: 'Tasks done',    dot: dc },
+      { label: emp.name, val: s.inProgress, color: 'teal',   sub: 'In progress',   dot: dc },
+      { label: emp.name, val: s.pendingQC,  color: 'yellow', sub: 'Pending QC',    dot: dc },
+      { label: emp.name, val: s.totalHrs + 'h', color: 'purple', sub: 'Hours worked', dot: dc },
+    ];
+
+    return cards.map(c => `
+      <div class="box">
+        <div class="box-top">
+          <div class="box-label">${c.label}</div>
+          <div class="dot ${c.dot}"></div>
+        </div>
+        <div class="box-value ${c.color}">${c.val}</div>
+        <div class="box-sub">${c.sub}</div>
+      </div>`).join('');
+  }
+
+  async function load() {
+    const ri = document.getElementById('ri');
+    ri.classList.add('spin');
+    try {
+      const res = await fetch('/api/employee-stats');
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data = await res.json();
+
+      if (!data.employees.length) {
+        document.getElementById('grid').innerHTML =
+          `<div class="loading" style="color:#f87171">Share Employee Hub with the integration to see stats.</div>`;
+      } else {
+        document.getElementById('grid').innerHTML = data.employees.map(boxes).join('');
+      }
+
+      const d = new Date(data.generatedAt);
+      document.getElementById('ts').textContent = `Updated ${d.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}`;
+    } catch(e) {
+      document.getElementById('grid').innerHTML =
+        `<div class="loading" style="color:#f87171">Error: ${e.message}</div>`;
+    }
+    ri.classList.remove('spin');
+  }
+
+  load();
+  setInterval(load, 120000);
+</script>
+</body>
+</html>

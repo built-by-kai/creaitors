@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bottlenecks</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html,body{height:100%;}
+body{font-family:'Inter',-apple-system,sans-serif;padding:16px 16px 28px;transition:background 0.3s;-webkit-font-smoothing:antialiased;}
+
+/* Dark (default) */
+body{background:#191919;color:#e8e8e8;}
+.section-header{border-bottom:1px solid #222;}
+.section-label{color:#3a3a3a;}
+.section-count{color:#2d2d2d;}
+.row{border-bottom:1px solid #1a1a1a;}
+.row:hover{background:rgba(255,255,255,0.025);}
+.row-title{color:#ccc;}
+.meta-tag{color:#444;background:#1c1c1c;}
+.meta-person{color:#3a3a3a;background:transparent;}
+.date-text{color:#333;}
+.bar-gray{background:#252525;}
+.empty-sub{color:#2d2d2d;}
+.ts{color:#3a3a3a;}
+.toggle-btn{background:#2A2A2A;border:1px solid rgba(255,255,255,0.12);color:rgba(255,255,255,0.5);}
+.toggle-btn:hover{border-color:rgba(255,255,255,0.25);color:rgba(255,255,255,0.8);}
+.refresh-btn{background:#2A2A2A;border:1px solid rgba(255,255,255,0.12);color:rgba(255,255,255,0.5);}
+.refresh-btn:hover{border-color:rgba(255,255,255,0.25);color:rgba(255,255,255,0.8);}
+.title{color:#fff;}
+.spinner{border:2px solid #1c1c1c;border-top-color:#2e2e2e;}
+.loading-text{color:#2e2e2e;}
+
+/* Light */
+body.light{background:#ffffff;color:#111;}
+body.light .section-header{border-bottom:1px solid #f0f0f0;}
+body.light .section-label{color:#bbb;}
+body.light .section-count{color:#ccc;}
+body.light .row{border-bottom:1px solid #f5f5f5;}
+body.light .row:hover{background:rgba(0,0,0,0.02);}
+body.light .row-title{color:#333;}
+body.light .meta-tag{color:#aaa;background:#f5f5f5;}
+body.light .meta-person{color:#bbb;background:transparent;}
+body.light .date-text{color:#ccc;}
+body.light .bar-gray{background:#eee;}
+body.light .empty-sub{color:#ccc;}
+body.light .ts{color:#ccc;}
+body.light .toggle-btn{background:#F3F4F6;border:1px solid rgba(0,0,0,0.08);color:rgba(0,0,0,0.4);}
+body.light .toggle-btn:hover{border-color:rgba(0,0,0,0.15);color:rgba(0,0,0,0.6);}
+body.light .refresh-btn{background:#F3F4F6;border:1px solid rgba(0,0,0,0.08);color:rgba(0,0,0,0.4);}
+body.light .refresh-btn:hover{border-color:rgba(0,0,0,0.15);color:rgba(0,0,0,0.6);}
+body.light .title{color:#111;}
+body.light .spinner{border:2px solid #eee;border-top-color:#ccc;}
+body.light .loading-text{color:#ccc;}
+body.light .total-badge{background:rgba(239,68,68,0.08);color:#DC2626;}
+body.light .total-badge.none{background:rgba(22,163,74,0.08);color:#16A34A;}
+body.light .chip-red{background:rgba(239,68,68,0.07);color:#DC2626;}
+body.light .chip-orange{background:rgba(249,115,22,0.07);color:#EA580C;}
+body.light .chip-yellow{background:rgba(202,138,4,0.07);color:#B45309;}
+body.light .chip-blue{background:rgba(37,99,235,0.07);color:#1D4ED8;}
+body.light .chip-teal{background:rgba(13,148,136,0.07);color:#0F766E;}
+body.light .badge-overdue{background:rgba(239,68,68,0.08);color:#DC2626;}
+body.light .badge-today{background:rgba(249,115,22,0.08);color:#EA580C;}
+body.light .badge-revision{background:rgba(202,138,4,0.08);color:#B45309;}
+body.light .badge-qc-content{background:rgba(37,99,235,0.08);color:#1D4ED8;}
+body.light .badge-qc-task{background:rgba(13,148,136,0.08);color:#0F766E;}
+
+/* Shared */
+.top-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+.top-left{display:flex;align-items:center;gap:8px;}
+.top-right{display:flex;align-items:center;gap:6px;}
+.title{font-size:13px;font-weight:600;letter-spacing:-0.2px;}
+.total-badge{font-size:10px;font-weight:700;background:rgba(239,68,68,0.12);color:#F87171;padding:2px 7px;border-radius:20px;}
+.total-badge.none{background:rgba(52,211,153,0.1);color:#34D399;}
+.ts{font-size:10px;font-weight:500;}
+.toggle-btn,.refresh-btn{font-family:'Inter',sans-serif;font-size:10px;font-weight:600;letter-spacing:0.3px;padding:4px 10px;border-radius:6px;cursor:pointer;transition:all 0.2s;}
+.refresh-btn.loading{opacity:0.4;pointer-events:none;}
+
+.summary{display:flex;gap:5px;margin-bottom:16px;flex-wrap:wrap;}
+.chip{font-size:9.5px;font-weight:600;padding:3px 8px;border-radius:4px;letter-spacing:0.2px;}
+.chip-red{background:rgba(239,68,68,0.1);color:#F87171;}
+.chip-orange{background:rgba(251,146,60,0.1);color:#FB923C;}
+.chip-yellow{background:rgba(234,179,8,0.1);color:#EAB308;}
+.chip-blue{background:rgba(96,165,250,0.1);color:#60A5FA;}
+.chip-teal{background:rgba(45,212,191,0.1);color:#2DD4BF;}
+
+.section{margin-bottom:20px;}
+.section-header{display:flex;align-items:center;gap:6px;margin-bottom:8px;padding-bottom:6px;}
+.section-label{font-size:9px;font-weight:700;letter-spacing:0.9px;text-transform:uppercase;}
+.section-count{font-size:9px;font-weight:500;}
+
+.row{display:grid;grid-template-columns:3px 1fr auto;gap:0 12px;align-items:start;padding:9px 6px;cursor:pointer;border-radius:4px;margin:0 -6px;transition:background 0.1s;}
+.row:last-child{border-bottom:none!important;}
+.bar{width:3px;border-radius:2px;min-height:32px;align-self:stretch;}
+.bar-red{background:#EF4444;}
+.bar-orange{background:#F97316;}
+.bar-yellow{background:#EAB308;}
+.bar-blue{background:#3B82F6;}
+.bar-teal{background:#2DD4BF;}
+.row-title{font-size:12px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:3px;}
+.row-meta{display:flex;align-items:center;gap:4px;flex-wrap:wrap;}
+.meta-tag{font-size:9px;font-weight:500;padding:1px 5px;border-radius:3px;white-space:nowrap;}
+.meta-person{font-size:9px;font-weight:500;}
+.row-right{display:flex;flex-direction:column;align-items:flex-end;gap:3px;min-width:80px;}
+.badges{display:flex;flex-direction:column;align-items:flex-end;gap:3px;}
+.badge{font-size:9px;font-weight:700;letter-spacing:0.3px;text-transform:uppercase;padding:2px 6px;border-radius:3px;white-space:nowrap;}
+.badge-overdue{background:rgba(239,68,68,0.12);color:#F87171;}
+.badge-today{background:rgba(251,146,60,0.12);color:#FB923C;}
+.badge-revision{background:rgba(234,179,8,0.1);color:#EAB308;}
+.badge-qc-content{background:rgba(96,165,250,0.1);color:#60A5FA;}
+.badge-qc-task{background:rgba(45,212,191,0.1);color:#2DD4BF;}
+.date-text{font-size:9.5px;font-weight:500;}
+
+.empty{text-align:center;padding:36px 16px;}
+.empty-icon{font-size:18px;margin-bottom:6px;opacity:0.4;}
+.empty-text{font-size:12px;font-weight:600;color:#34D399;}
+.empty-sub{font-size:10px;margin-top:3px;}
+body.light .empty-text{color:#059669;}
+
+.loading{display:flex;align-items:center;justify-content:center;height:100px;flex-direction:column;gap:8px;}
+.spinner{width:16px;height:16px;border-radius:50%;animation:spin 0.7s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.loading-text{font-size:10px;font-weight:500;}
+
+#pbar{position:fixed;bottom:8px;right:8px;width:5px;height:5px;border-radius:50%;background:#3B82F6;opacity:0;transition:opacity 0.3s;pointer-events:none;z-index:9999;}
+#pbar.on{opacity:0.4;animation:dotpulse 1s ease-in-out infinite;}
+@keyframes dotpulse{0%,100%{opacity:0.15;}50%{opacity:0.5;}}
+</style>
+</head>
+<body>
+<div id="pbar"></div>
+<div id="root"><div class="loading"><div class="spinner"></div><div class="loading-text">Loading...</div></div></div>
+<script>
+// Init theme
+(function(){
+  var s=localStorage.getItem('btl-theme');
+  if(s==='light')document.body.classList.add('light');
+  else if(!s&&window.matchMedia('(prefers-color-scheme: light)').matches)document.body.classList.add('light');
+})();
+
+var _data=null;
+function esc(s){if(!s)return'';return(''+s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function fmtDate(d){if(!d)return'';var mo=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];var p=d.split('-');return mo[parseInt(p[1])-1]+' '+parseInt(p[2]);}
+
+function barClass(r){
+  if(r.includes('Overdue'))return'bar-red';
+  if(r.includes('Due Today'))return'bar-orange';
+  if(r.includes('Revision'))return'bar-yellow';
+  if(r.includes('QC Review'))return'bar-blue';       // content Final QC
+  if(r.includes('Pending QC'))return'bar-teal';      // task QC
+  return'bar-gray';
+}
+
+function renderBadges(item){
+  var h='';
+  if(item.reasons.includes('Overdue'))h+='<span class="badge badge-overdue">'+(item.daysOverdue>0?item.daysOverdue+'d late':'Overdue')+'</span>';
+  if(item.reasons.includes('Due Today'))h+='<span class="badge badge-today">Today</span>';
+  if(item.reasons.includes('Revision'))h+='<span class="badge badge-revision">Revision</span>';
+  if(item.reasons.includes('QC Review'))h+='<span class="badge badge-qc-content">Content QC</span>';
+  if(item.reasons.includes('Pending QC'))h+='<span class="badge badge-qc-task">Task QC</span>';
+  return h;
+}
+
+function renderRow(item){
+  var bar=barClass(item.reasons);
+  var meta='';
+  if(item.client)meta+='<span class="meta-tag">'+esc(item.client)+'</span>';
+  if(item.channel&&item.channel.length)meta+='<span class="meta-tag">'+esc(item.channel.join('·'))+'</span>';
+  if(item.type&&item.type.length)meta+='<span class="meta-tag">'+esc(item.type.join(', '))+'</span>';
+  if(item.campaign)meta+='<span class="meta-tag">'+esc(item.campaign)+'</span>';
+  if(item.people&&item.people.length)meta+='<span class="meta-tag meta-person">'+esc(item.people.join(', '))+'</span>';
+  var dateStr=item.deadline?fmtDate(item.deadline):'';
+  var url=item.url?(item.url.replace(/'/g,"\\'")):'' ;
+  return '<div class="row" onclick="openUrl(\''+url+'\')">'
+    +'<div class="bar '+bar+'"></div>'
+    +'<div class="row-body"><div class="row-title">'+esc(item.title)+'</div>'+(meta?'<div class="row-meta">'+meta+'</div>':'')+'</div>'
+    +'<div class="row-right"><div class="badges">'+renderBadges(item)+'</div>'+(dateStr?'<div class="date-text">'+dateStr+'</div>':'')+'</div>'
+    +'</div>';
+}
+
+function render(data){
+  var isLight=document.body.classList.contains('light');
+  var total=data.total||0;
+  var html='<div class="top-bar">'
+    +'<div class="top-left"><span class="title">Bottlenecks</span>'
+    +(total>0?'<span class="total-badge">'+total+'</span>':'<span class="total-badge none">All clear</span>')
+    +'</div>'
+    +'<div class="top-right">'
+    +'<span class="ts" id="ts"></span>'
+    +'<button class="toggle-btn" onclick="toggleMode()">'+(isLight?'Dark':'Light')+'</button>'
+    +'<button class="refresh-btn" onclick="loadData()" id="rbtn">Refresh</button>'
+    +'</div></div>';
+
+  if(total===0){
+    html+='<div class="empty"><div class="empty-icon">✓</div><div class="empty-text">No bottlenecks</div><div class="empty-sub">Everything is on track</div></div>';
+    document.getElementById('root').innerHTML=html;updateTs();return;
+  }
+
+  html+='<div class="summary">';
+  if(data.overdue>0)html+='<span class="chip chip-red">'+data.overdue+' Overdue</span>';
+  if(data.dueToday>0)html+='<span class="chip chip-orange">'+data.dueToday+' Due Today</span>';
+  if(data.revisions>0)html+='<span class="chip chip-yellow">'+data.revisions+' Revision</span>';
+  if(data.contentQC>0)html+='<span class="chip chip-blue">'+data.contentQC+' Final QC</span>';
+  if(data.taskQC>0)html+='<span class="chip chip-teal">'+data.taskQC+' Task QC</span>';
+  html+='</div>';
+
+  if(data.content&&data.content.length){
+    html+='<div class="section"><div class="section-header"><span class="section-label">Content</span><span class="section-count">· '+data.content.length+'</span></div>';
+    data.content.forEach(function(i){html+=renderRow(i);});
+    html+='</div>';
+  }
+  if(data.tasks&&data.tasks.length){
+    html+='<div class="section"><div class="section-header"><span class="section-label">Tasks · QC</span><span class="section-count">· '+data.tasks.length+'</span></div>';
+    data.tasks.forEach(function(i){html+=renderRow(i);});
+    html+='</div>';
+  }
+  document.getElementById('root').innerHTML=html;
+  updateTs();
+}
+
+function updateTs(){var el=document.getElementById('ts');if(!el)return;var n=new Date();var h=n.getHours(),m=n.getMinutes();el.textContent=(h%12||12)+':'+(m<10?'0':'')+m+(h<12?' am':' pm');}
+window.openUrl=function(url){if(url)window.open(url,'_blank');};
+window.toggleMode=function(){var l=document.body.classList.toggle('light');localStorage.setItem('btl-theme',l?'light':'dark');if(_data)render(_data);};
+
+function pbarOn(){document.getElementById('pbar').classList.add('on');}
+function pbarOff(){document.getElementById('pbar').classList.remove('on');}
+
+async function loadData(){
+  pbarOn();
+  var btn=document.getElementById('rbtn');if(btn)btn.classList.add('loading');
+  try{
+    if(!_data){try{var c=JSON.parse(localStorage.getItem('btl-cache'));if(c){render(c);}}catch(e){}}
+    var res=await fetch('/api/bottlenecks');
+    if(!res.ok)throw new Error('API error '+res.status);
+    _data=await res.json();
+    try{localStorage.setItem('btl-cache',JSON.stringify(_data));}catch(e){}
+    render(_data);
+  }catch(err){
+    if(!_data)document.getElementById('root').innerHTML='<div class="loading"><div style="font-size:12px;color:#F87171;font-weight:600;">Failed to load</div><div style="font-size:10px;color:#666;margin-top:6px;">'+esc(err.message)+'</div></div>';
+  }finally{
+    pbarOff();
+    var b=document.getElementById('rbtn');if(b)b.classList.remove('loading');
+  }
+}
+loadData();
+setInterval(loadData,60000);
+document.addEventListener('visibilitychange',function(){if(!document.hidden)loadData();});
+</script>
+</body>
+</html>

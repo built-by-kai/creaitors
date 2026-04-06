@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Content Stats</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { height: 100%; }
+  body {
+    font-family: 'Inter', -apple-system, sans-serif;
+    padding: 16px;
+    transition: background 0.3s;
+  }
+
+  /* Dark mode (default) */
+  body { background: #191919; }
+  .stat-card {
+    background: linear-gradient(145deg, #1E1E1E, #252525);
+    border: 1px solid rgba(255,255,255,0.06);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.3), 0 4px 12px rgba(0,0,0,0.15);
+  }
+  .stat-card:hover {
+    border-color: rgba(255,255,255,0.12);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.4), 0 8px 20px rgba(0,0,0,0.2);
+  }
+  .stat-sub { color: #6B7280; }
+  .toggle-btn { background: #2A2A2A; border: 1px solid rgba(255,255,255,0.12); color: rgba(255,255,255,0.5); }
+  .toggle-btn:hover { border-color: rgba(255,255,255,0.25); color: rgba(255,255,255,0.8); }
+
+  /* Dark mode card colors */
+  .card-blue .stat-label  { color: #93C5FD; }
+  .card-blue .stat-value  { color: #60A5FA; }
+  .card-blue .stat-accent { background: #60A5FA; }
+
+  .card-teal .stat-label  { color: #5EEAD4; }
+  .card-teal .stat-value  { color: #2DD4BF; }
+  .card-teal .stat-accent { background: #2DD4BF; }
+
+  .card-amber .stat-label  { color: #FCD34D; }
+  .card-amber .stat-value  { color: #FBBF24; }
+  .card-amber .stat-accent { background: #FBBF24; }
+
+  .card-green .stat-label  { color: #6EE7B7; }
+  .card-green .stat-value  { color: #34D399; }
+  .card-green .stat-accent { background: #34D399; }
+
+  .card-red .stat-label  { color: #FCA5A5; }
+  .card-red .stat-value  { color: #F87171; }
+  .card-red .stat-accent { background: #F87171; }
+
+  /* Light mode */
+  body.light { background: #ffffff; }
+  body.light .stat-card {
+    background: linear-gradient(145deg, #ffffff, #F7F8FA);
+    border: 1px solid rgba(0,0,0,0.06);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.03);
+  }
+  body.light .stat-card:hover {
+    border-color: rgba(0,0,0,0.1);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.06), 0 8px 20px rgba(0,0,0,0.04);
+  }
+  body.light .stat-sub { color: #9CA3AF; }
+  body.light .toggle-btn { background: #F3F4F6; border: 1px solid rgba(0,0,0,0.08); color: rgba(0,0,0,0.4); }
+  body.light .toggle-btn:hover { border-color: rgba(0,0,0,0.15); color: rgba(0,0,0,0.6); }
+
+  body.light .card-blue .stat-label  { color: #2563EB; }
+  body.light .card-blue .stat-value  { color: #1D4ED8; }
+  body.light .card-blue .stat-accent { background: #2563EB; }
+
+  body.light .card-teal .stat-label  { color: #0D9488; }
+  body.light .card-teal .stat-value  { color: #0F766E; }
+  body.light .card-teal .stat-accent { background: #0D9488; }
+
+  body.light .card-amber .stat-label  { color: #D97706; }
+  body.light .card-amber .stat-value  { color: #B45309; }
+  body.light .card-amber .stat-accent { background: #D97706; }
+
+  body.light .card-green .stat-label  { color: #059669; }
+  body.light .card-green .stat-value  { color: #047857; }
+  body.light .card-green .stat-accent { background: #059669; }
+
+  body.light .card-red .stat-label  { color: #DC2626; }
+  body.light .card-red .stat-value  { color: #B91C1C; }
+  body.light .card-red .stat-accent { background: #DC2626; }
+
+  .top-bar {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 12px;
+    gap: 8px;
+  }
+
+  .toggle-btn {
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    line-height: 1;
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 0.3px;
+  }
+
+  .loading {
+    display: flex; align-items: center; justify-content: center;
+    height: 100px; flex-direction: column; gap: 10px;
+  }
+  .spinner {
+    width: 20px; height: 20px;
+    border: 2px solid rgba(128,128,128,0.15);
+    border-top-color: #666;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .loading-text { font-size: 11px; color: #666; }
+
+  .stat-row {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+  }
+
+  .stat-card {
+    border-radius: 14px;
+    padding: 22px 24px;
+    transition: all 0.25s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .stat-accent {
+    position: absolute;
+    top: 18px;
+    right: 20px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    opacity: 0.8;
+  }
+
+  .stat-label {
+    font-size: 10.5px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin-bottom: 12px;
+  }
+
+  .stat-value {
+    font-size: 36px;
+    font-weight: 800;
+    letter-spacing: -1.5px;
+    line-height: 1;
+  }
+
+  .stat-sub {
+    font-size: 11.5px;
+    margin-top: 10px;
+    font-weight: 500;
+    letter-spacing: -0.1px;
+  }
+</style>
+</head>
+<body>
+
+<div id="dashboard">
+  <div class="loading">
+    <div class="spinner"></div>
+    <div class="loading-text">Loading...</div>
+  </div>
+</div>
+
+<script>
+// Initialise theme from storage or system preference
+(function() {
+  var saved = localStorage.getItem('content-stats-theme');
+  if (saved === 'light') { document.body.classList.add('light'); }
+  else if (!saved && window.matchMedia('(prefers-color-scheme: light)').matches) { document.body.classList.add('light'); }
+})();
+
+function render(d) {
+  var isLight = document.body.classList.contains('light');
+  var attnColor = d.needsAttention > 0 ? 'card-red' : 'card-green';
+
+  // Build sub-text lines
+  var sub1Parts = [];
+  if (d.contentBreakdown.revision > 0) sub1Parts.push(d.contentBreakdown.revision + ' revision');
+  if (d.contentBreakdown.qc > 0) sub1Parts.push(d.contentBreakdown.qc + ' final QC');
+  var sub1 = sub1Parts.length ? sub1Parts.join(', ') : 'All on track';
+
+  var sub2Parts = [];
+  if (d.tasksBreakdown.waiting > 0) sub2Parts.push(d.tasksBreakdown.waiting + ' waiting');
+  if (d.tasksBreakdown.qc > 0) sub2Parts.push(d.tasksBreakdown.qc + ' QC pending');
+  if (d.tasksBreakdown.revision > 0) sub2Parts.push(d.tasksBreakdown.revision + ' revision');
+  var sub2 = sub2Parts.length ? sub2Parts.join(', ') : 'All clear';
+
+  var sub3Parts = [];
+  if (d.dueBreakdown.content > 0) sub3Parts.push(d.dueBreakdown.content + ' content');
+  if (d.dueBreakdown.tasks > 0) sub3Parts.push(d.dueBreakdown.tasks + ' tasks');
+  var sub3 = sub3Parts.length ? sub3Parts.join(', ') + ' due' : 'Nothing due';
+
+  var sub4Parts = [];
+  if (d.attentionBreakdown.overdue > 0) sub4Parts.push(d.attentionBreakdown.overdue + ' overdue');
+  if (d.attentionBreakdown.revision > 0) sub4Parts.push(d.attentionBreakdown.revision + ' revision');
+  if (d.attentionBreakdown.qc > 0) sub4Parts.push(d.attentionBreakdown.qc + ' QC');
+  var sub4 = sub4Parts.length ? sub4Parts.join(', ') : 'All clear ✓';
+
+  document.getElementById('dashboard').innerHTML =
+    '<div class="top-bar">' +
+      '<button class="toggle-btn" onclick="toggleMode()">' + (isLight ? 'Dark mode' : 'Light mode') + '</button>' +
+      '<button class="toggle-btn" onclick="loadData()">Refresh</button>' +
+    '</div>' +
+    '<div class="stat-row">' +
+
+    '<div class="stat-card card-blue">' +
+      '<div class="stat-accent"></div>' +
+      '<div class="stat-label">Content in Motion</div>' +
+      '<div class="stat-value">' + d.contentInMotion + '</div>' +
+      '<div class="stat-sub">' + sub1 + '</div>' +
+    '</div>' +
+
+    '<div class="stat-card card-teal">' +
+      '<div class="stat-accent"></div>' +
+      '<div class="stat-label">Active Tasks</div>' +
+      '<div class="stat-value">' + d.tasksTotal + '</div>' +
+      '<div class="stat-sub">' + sub2 + '</div>' +
+    '</div>' +
+
+    '<div class="stat-card card-amber">' +
+      '<div class="stat-accent"></div>' +
+      '<div class="stat-label">Due This Week</div>' +
+      '<div class="stat-value">' + d.dueThisWeek + '</div>' +
+      '<div class="stat-sub">' + sub3 + '</div>' +
+    '</div>' +
+
+    '<div class="stat-card ' + attnColor + '">' +
+      '<div class="stat-accent"></div>' +
+      '<div class="stat-label">Needs Attention</div>' +
+      '<div class="stat-value">' + d.needsAttention + '</div>' +
+      '<div class="stat-sub">' + sub4 + '</div>' +
+    '</div>' +
+
+    '</div>';
+}
+
+var _lastData = null;
+async function loadData() {
+  try {
+    var res = await fetch('/api/stats');
+    if (!res.ok) throw new Error('API error');
+    _lastData = await res.json();
+    try { localStorage.setItem('stats-cache', JSON.stringify(_lastData)); } catch(e) {}
+    render(_lastData);
+  } catch(err) {
+    var cached = null;
+    try { cached = JSON.parse(localStorage.getItem('stats-cache')); } catch(e) {}
+    if (cached) { render(cached); }
+    else {
+      document.getElementById('dashboard').innerHTML =
+        '<div class="loading"><div style="font-size:13px;color:#EF4444;font-weight:600;">Could not load data</div></div>';
+    }
+  }
+}
+
+window.toggleMode = function() {
+  var isLight = document.body.classList.toggle('light');
+  localStorage.setItem('content-stats-theme', isLight ? 'light' : 'dark');
+  if (_lastData) render(_lastData);
+};
+
+loadData();
+setInterval(loadData, 60 * 1000);
+document.addEventListener('visibilitychange', function() { if (!document.hidden) loadData(); });
+</script>
+</body>
+</html>
