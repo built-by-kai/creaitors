@@ -99,6 +99,10 @@ module.exports = async function handler(req, res) {
       const status = getStatus(p['Task Status']);
       if (!status || status === 'Done') continue;
 
+      // Skip tasks not linked to any content production
+      const contentRel = p['Content Production']?.relation || [];
+      if (contentRel.length === 0) continue;
+
       tasksTotal++;
       if (status === 'Waiting')              tasksWaiting++;
       if (status === 'Ready to Work' || status === 'In Progress' || status === 'Not started') tasksInProgress++;
