@@ -1,4 +1,6 @@
 {
   "version": 2,
-  "rootDirectory": "pm"
+  "rewrites": [
+    { "source": "/((?!api/).*)", "destination": "/index.html" }
+  ]
 }
