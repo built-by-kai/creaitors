@@ -63,8 +63,9 @@ module.exports = async function handler(req, res) {
     const props = clientPage.properties;
 
     // Get client name
+    // FIX: Changed 'Client Name' to 'Company' to match the Client Hub title property
     const clientName =
-      props['Client Name']?.title?.map(t => t.plain_text).join('') || 'Unknown Client';
+      props['Company']?.title?.map(t => t.plain_text).join('') || 'Unknown Client';
 
     // Get contract dates
     const startDateStr = props['Contract Start Date']?.date?.start;
@@ -102,9 +103,9 @@ module.exports = async function handler(req, res) {
     const errors  = [];
 
     for (const month of months) {
-      const label     = `${MONTH_NAMES[month.getMonth()]} ${month.getFullYear()}`;
-      const rowName   = `${clientName} – ${label}`;
-      const dateStr   = `${month.getFullYear()}-${String(month.getMonth() + 1).padStart(2, '0')}-01`;
+      const label   = `${MONTH_NAMES[month.getMonth()]} ${month.getFullYear()}`;
+      const rowName = `${clientName} – ${label}`;
+      const dateStr = `${month.getFullYear()}-${String(month.getMonth() + 1).padStart(2, '0')}-01`;
 
       try {
         const createRes = await fetch('https://api.notion.com/v1/pages', {
@@ -113,39 +114,37 @@ module.exports = async function handler(req, res) {
           body: JSON.stringify({
             parent: { database_id: CLIENT_PAYMENTS_DB_ID },
             properties: {
-              'Payment Record': {
+              'Name': {
                 title: [{ text: { content: rowName } }],
-              },
-              'Client': {
-                relation: [{ id: clientPageId }],
               },
               'Billing Month': {
                 date: { start: dateStr },
+              },
+              'Client': {
+                relation: [{ id: clientPageId }],
               },
             },
           }),
         });
 
-        if (createRes.ok) {
-          created.push(rowName);
+        if (!createRes.ok) {
+          const errBody = await createRes.text();
+          errors.push({ month: label, error: errBody });
         } else {
-          const errText = await createRes.text();
-          errors.push({ row: rowName, error: errText });
+          const createdPage = await createRes.json();
+          created.push({ month: label, id: createdPage.id });
         }
-      } catch (e) {
-        errors.push({ row: rowName, error: e.message });
+      } catch (err) {
+        errors.push({ month: label, error: err.message });
       }
     }
 
     return res.status(200).json({
       success: true,
       client: clientName,
-      contractStart: startDateStr,
-      contractEnd: endDateStr,
       totalMonths: months.length,
       created: created.length,
-      records: created,
-      ...(errors.length > 0 && { errors }),
+      errors: errors.length > 0 ? errors : undefined,
     });
 
   } catch (err) {

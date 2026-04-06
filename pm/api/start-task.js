@@ -1,8 +1,8 @@
 // Vercel Serverless Function — Start Task
-// Triggered by a Notion Button on a Task page ("▶️ Start Task")
 // Sets Task Started On = now, clears Task Done On + Duration Display, Task Status = In Progress
 // If current Task Status is "Review Needed" → keeps Accumulated Mins (continuation after QC rejection)
 // Otherwise → resets Accumulated Mins to 0 (fresh start)
+// NEW: If the task is "Content Planning", also sets the parent Content's "Content Status" to "In Production"
 // Environment variables: NOTION_API_KEY
 
 module.exports = async function handler(req, res) {
@@ -69,6 +69,29 @@ module.exports = async function handler(req, res) {
 
     if (!updateRes.ok) throw new Error(`Failed to start task: ${await updateRes.text()}`);
 
+    // --- Content Planning → In Production ---
+    // Only when "Content Planning" is started, update the parent content's status
+    let contentStatusUpdated = false;
+    if (taskName === 'Content Planning') {
+      const contentRelation = props['Content Production']?.relation;
+      if (contentRelation && contentRelation.length > 0) {
+        const contentPageId = contentRelation[0].id;
+        const contentUpdateRes = await fetch(`https://api.notion.com/v1/pages/${contentPageId}`, {
+          method: 'PATCH',
+          headers,
+          body: JSON.stringify({
+            properties: {
+              'Content Status': { status: { name: 'In Production' } },
+            },
+          }),
+        });
+        if (contentUpdateRes.ok) {
+          contentStatusUpdated = true;
+        }
+        // Non-fatal: if this fails, the task itself was still started successfully
+      }
+    }
+
     return res.status(200).json({
       success: true,
       message: isQcRejection
@@ -78,6 +101,7 @@ module.exports = async function handler(req, res) {
       startedAt: now,
       accumulatedMins: newAccumulatedMins,
       isQcRejection,
+      contentStatusUpdated,
     });
 
   } catch (err) {
