@@ -77,7 +77,7 @@ module.exports = async function handler(req, res) {
     const pendingReview = [];
     const dueThisWeek = [];
 
-    const DONE_STATUS = 'Done (Published/Completed)';
+    const DONE_STATUS = 'Done';
 
     for (const page of contentPages) {
       const props = page.properties;
@@ -94,12 +94,12 @@ module.exports = async function handler(req, res) {
       }
 
       // In Production: currently being worked on
-      if (status === 'In-Production' || status === 'Revision/Production') {
+      if (status === 'In-Production' || status === 'Revision Needed') {
         inProduction.push({ name, status });
       }
 
-      // Pending Review: waiting on QC or client
-      if (status === 'QC Review' || status === 'Client Review') {
+      // Pending Review: waiting on QC
+      if (status === 'Final QC Review' || status === 'Scheduled Distribution') {
         pendingReview.push({ name, status });
       }
 
