@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,59 +8,29 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 *{margin:0;padding:0;box-sizing:border-box;}
 body{font-family:'Inter',-apple-system,sans-serif;padding:16px;transition:background 0.3s;background:#191919;color:#fff;}
+
 .card{background:linear-gradient(145deg,#1E1E1E,#252525);border:1px solid rgba(255,255,255,0.06);box-shadow:0 1px 3px rgba(0,0,0,0.3),0 4px 12px rgba(0,0,0,0.15);border-radius:14px;transition:all 0.25s ease;}
 .card:hover{border-color:rgba(255,255,255,0.12);}
+
 .top-bar{display:flex;align-items:center;margin-bottom:14px;gap:8px;}
-.top-right{display:flex;align-items:center;gap:8px;margin-left:auto;margin-right:120px;}
+.top-right{display:flex;align-items:center;gap:8px;margin-left:auto;}
 .toggle-btn{font-family:'Inter',sans-serif;font-size:11px;font-weight:600;line-height:1;padding:6px 12px;border-radius:6px;cursor:pointer;transition:all 0.2s;letter-spacing:0.3px;background:#2A2A2A;border:1px solid rgba(255,255,255,0.12);color:rgba(255,255,255,0.5);}
 .toggle-btn:hover{border-color:rgba(255,255,255,0.25);color:rgba(255,255,255,0.8);}
+
 .stat-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:14px;}
 .stat-card{padding:18px 20px;position:relative;overflow:hidden;}
 .s-accent{position:absolute;top:16px;right:16px;width:7px;height:7px;border-radius:50%;opacity:0.8;}
 .s-label{font-size:9.5px;font-weight:600;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:10px;}
 .s-value{font-size:30px;font-weight:800;letter-spacing:-1.5px;line-height:1;}
 .sub-text{font-size:11px;margin-top:8px;font-weight:500;color:#6B7280;}
-.card-blue .s-label{color:#93C5FD;}
-.card-blue .s-value{color:#60A5FA;}
-.card-blue .s-accent{background:#60A5FA;}
-.card-green .s-label{color:#6EE7B7;}
-.card-green .s-value{color:#34D399;}
-.card-green .s-accent{background:#34D399;}
-.card-amber .s-label{color:#FCD34D;}
-.card-amber .s-value{color:#FBBF24;}
-.card-amber .s-accent{background:#FBBF24;}
-.card-teal .s-label{color:#5EEAD4;}
-.card-teal .s-value{color:#2DD4BF;}
-.card-teal .s-accent{background:#2DD4BF;}
-body.light{background:#fff;color:#111;}
-body.light .card{background:linear-gradient(145deg,#fff,#F7F8FA);border:1px solid rgba(0,0,0,0.06);box-shadow:0 1px 3px rgba(0,0,0,0.04),0 4px 12px rgba(0,0,0,0.03);}
-body.light .card:hover{border-color:rgba(0,0,0,0.1);}
-body.light .card-blue .s-label{color:#2563EB;}
-body.light .card-blue .s-value{color:#1D4ED8;}
-body.light .card-blue .s-accent{background:#2563EB;}
-body.light .card-green .s-label{color:#059669;}
-body.light .card-green .s-value{color:#047857;}
-body.light .card-green .s-accent{background:#059669;}
-body.light .card-amber .s-label{color:#D97706;}
-body.light .card-amber .s-value{color:#B45309;}
-body.light .card-amber .s-accent{background:#D97706;}
-body.light .card-teal .s-label{color:#0D9488;}
-body.light .card-teal .s-value{color:#0F766E;}
-body.light .card-teal .s-accent{background:#0D9488;}
-body.light .toggle-btn{background:#F3F4F6;border:1px solid rgba(0,0,0,0.08);color:rgba(0,0,0,0.4);}
-body.light .toggle-btn:hover{border-color:rgba(0,0,0,0.15);color:rgba(0,0,0,0.6);}
-body.light .sub-text{color:#9CA3AF;}
-body.light .detail-title{color:rgba(0,0,0,0.35);}
-body.light .detail-item{border-bottom:1px solid rgba(0,0,0,0.04);}
-body.light .di-label{color:rgba(0,0,0,0.5);}
-body.light .di-value{color:#111;}
-body.light .di-sub{color:rgba(0,0,0,0.3);}
-body.light .badge-green{background:rgba(5,150,105,0.1);color:#059669;}
-body.light .badge-red{background:rgba(220,38,38,0.1);color:#DC2626;}
-body.light .badge-orange{background:rgba(217,119,6,0.1);color:#D97706;}
-.loading{display:flex;align-items:center;justify-content:center;height:100px;flex-direction:column;gap:10px;}
-.spinner{width:20px;height:20px;border:2px solid rgba(128,128,128,0.15);border-top-color:#666;border-radius:50%;animation:spin 0.8s linear infinite;}
-@keyframes spin{to{transform:rotate(360deg);}}
+
+.card-blue .s-label{color:#93C5FD;} .card-blue .s-value{color:#60A5FA;} .card-blue .s-accent{background:#60A5FA;}
+.card-green .s-label{color:#6EE7B7;} .card-green .s-value{color:#34D399;} .card-green .s-accent{background:#34D399;}
+.card-amber .s-label{color:#FCD34D;} .card-amber .s-value{color:#FBBF24;} .card-amber .s-accent{background:#FBBF24;}
+.card-red .s-label{color:#FCA5A5;} .card-red .s-value{color:#F87171;} .card-red .s-accent{background:#F87171;}
+.card-teal .s-label{color:#5EEAD4;} .card-teal .s-value{color:#2DD4BF;} .card-teal .s-accent{background:#2DD4BF;}
+.card-purple .s-label{color:#C4B5FD;} .card-purple .s-value{color:#A78BFA;} .card-purple .s-accent{background:#A78BFA;}
+
 .detail-row{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;}
 .detail-card{padding:20px;}
 .detail-title{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.6px;color:rgba(255,255,255,0.35);margin-bottom:14px;}
@@ -68,121 +38,198 @@ body.light .badge-orange{background:rgba(217,119,6,0.1);color:#D97706;}
 .detail-item:last-child{border-bottom:none;}
 .di-label{font-size:12px;font-weight:500;color:rgba(255,255,255,0.6);}
 .di-value{font-size:13px;font-weight:700;color:#e8e8e8;}
-.di-sub{font-size:10px;color:rgba(255,255,255,0.3);margin-top:2px;}
-.badge{display:inline-block;font-size:10px;font-weight:600;padding:2px 8px;border-radius:4px;}
-.badge-green{background:rgba(52,211,153,0.15);color:#34D399;}
-.badge-red{background:rgba(248,113,113,0.15);color:#F87171;}
-.badge-orange{background:rgba(251,191,36,0.15);color:#FBBF24;}
+
+/* Progress bar for deliverables */
+.prog-row{margin-bottom:14px;}
+.prog-row:last-child{margin-bottom:0;}
+.prog-header{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px;}
+.prog-label{font-size:12px;font-weight:600;color:rgba(255,255,255,0.65);}
+.prog-count{font-size:12px;font-weight:700;color:#e8e8e8;}
+.prog-bar{background:rgba(255,255,255,0.06);border-radius:4px;height:8px;overflow:hidden;}
+.prog-fill{height:100%;border-radius:4px;transition:width 0.4s ease;}
+.prog-sub{font-size:10px;color:rgba(255,255,255,0.3);margin-top:4px;}
+
+/* Campaign progress list */
+.camp-item{display:flex;align-items:center;gap:12px;padding:9px 0;border-bottom:1px solid rgba(255,255,255,0.04);}
+.camp-item:last-child{border-bottom:none;}
+.camp-name{font-size:12px;font-weight:600;color:rgba(255,255,255,0.8);flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.camp-type{font-size:10px;font-weight:600;padding:2px 8px;border-radius:4px;background:rgba(255,255,255,0.07);color:#909090;white-space:nowrap;}
+.camp-pct{font-size:12px;font-weight:700;min-width:36px;text-align:right;}
+.camp-bar-wrap{width:60px;flex-shrink:0;}
+.camp-bar{background:rgba(255,255,255,0.06);border-radius:3px;height:5px;overflow:hidden;}
+.camp-bar-fill{height:100%;border-radius:3px;}
+
+.camp-scroll{max-height:260px;overflow-y:auto;padding-right:4px;}
+.camp-scroll::-webkit-scrollbar{width:4px;}
+.camp-scroll::-webkit-scrollbar-track{background:transparent;}
+.camp-scroll::-webkit-scrollbar-thumb{background:#2e2e2e;border-radius:3px;}
+
+.empty-msg{font-size:12px;color:#4B5563;font-style:italic;padding:10px 0;}
+
+/* Loading */
+.loading{display:flex;align-items:center;justify-content:center;height:100px;flex-direction:column;gap:10px;}
+.spinner{width:20px;height:20px;border:2px solid rgba(128,128,128,0.15);border-top-color:#666;border-radius:50%;animation:spin 0.8s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+#lbar{position:fixed;top:0;left:0;right:0;height:2px;z-index:9999;pointer-events:none;background:transparent;}
+#lbar.on{background:linear-gradient(90deg,#60A5FA,#2DD4BF,#A78BFA);animation:lbar-anim 1.2s ease-in-out infinite;}
+@keyframes lbar-anim{0%{opacity:1;transform:scaleX(0);transform-origin:left}60%{opacity:1;transform:scaleX(0.85);transform-origin:left}100%{opacity:0;transform:scaleX(1);transform-origin:left}}
+
+/* ====== LIGHT MODE ====== */
+body.light{background:#fff;color:#111;}
+body.light .card{background:linear-gradient(145deg,#fff,#F7F8FA);border:1px solid rgba(0,0,0,0.06);box-shadow:0 1px 3px rgba(0,0,0,0.04),0 4px 12px rgba(0,0,0,0.03);}
+body.light .card:hover{border-color:rgba(0,0,0,0.1);}
+body.light .card-blue .s-label{color:#2563EB;} body.light .card-blue .s-value{color:#1D4ED8;} body.light .card-blue .s-accent{background:#2563EB;}
+body.light .card-green .s-label{color:#059669;} body.light .card-green .s-value{color:#047857;} body.light .card-green .s-accent{background:#059669;}
+body.light .card-amber .s-label{color:#D97706;} body.light .card-amber .s-value{color:#B45309;} body.light .card-amber .s-accent{background:#D97706;}
+body.light .card-red .s-label{color:#DC2626;} body.light .card-red .s-value{color:#B91C1C;} body.light .card-red .s-accent{background:#DC2626;}
+body.light .card-teal .s-label{color:#0D9488;} body.light .card-teal .s-value{color:#0F766E;} body.light .card-teal .s-accent{background:#0D9488;}
+body.light .card-purple .s-label{color:#7C3AED;} body.light .card-purple .s-value{color:#6D28D9;} body.light .card-purple .s-accent{background:#7C3AED;}
+body.light .toggle-btn{background:#F3F4F6;border:1px solid rgba(0,0,0,0.08);color:rgba(0,0,0,0.4);}
+body.light .toggle-btn:hover{border-color:rgba(0,0,0,0.15);color:rgba(0,0,0,0.6);}
+body.light .sub-text{color:#9CA3AF;}
+body.light .detail-title{color:rgba(0,0,0,0.35);}
+body.light .detail-item{border-bottom:1px solid rgba(0,0,0,0.04);}
+body.light .di-label{color:rgba(0,0,0,0.5);}
+body.light .di-value{color:#111;}
+body.light .prog-label{color:rgba(0,0,0,0.55);}
+body.light .prog-count{color:#111;}
+body.light .prog-bar{background:rgba(0,0,0,0.07);}
+body.light .prog-sub{color:rgba(0,0,0,0.3);}
+body.light .camp-name{color:#111;}
+body.light .camp-type{background:rgba(0,0,0,0.06);color:#777;}
+body.light .camp-item{border-bottom-color:rgba(0,0,0,0.05);}
+body.light .camp-bar{background:rgba(0,0,0,0.07);}
+
 @media(max-width:768px){
 body{padding:10px;}
 .stat-row{grid-template-columns:repeat(2,1fr);gap:8px;}
 .detail-row{grid-template-columns:1fr;}
 .stat-card{padding:14px 16px;}
 .s-value{font-size:22px;}
-.top-right{margin-right:8px;}
 }
 @media(max-width:400px){
 .stat-row{grid-template-columns:1fr;}
 .top-bar{flex-direction:column;align-items:flex-start;}
-.top-right{margin-left:0;margin-right:0;}
-}
-#lbar{position:fixed;top:0;left:0;right:0;height:2px;z-index:9999;pointer-events:none;background:transparent;}
-#lbar.on{background:linear-gradient(90deg,#60A5FA,#2DD4BF,#A78BFA);animation:lbar-anim 1.2s ease-in-out infinite;}
-@keyframes lbar-anim{
-0%{opacity:1;transform:scaleX(0);transform-origin:left}
-60%{opacity:1;transform:scaleX(0.85);transform-origin:left}
-100%{opacity:0;transform:scaleX(1);transform-origin:left}
+.top-right{margin-left:0;}
 }
 </style>
 </head>
 <body>
 <div id="lbar"></div>
 <div id="dashboard">
-<div class="loading">
-<div class="spinner"></div>
-<div style="font-size:13px;color:#999;">Loading stats...</div>
-</div>
+<div class="loading"><div class="spinner"></div><div style="font-size:13px;color:#999;">Loading stats...</div></div>
 </div>
 <script>
-(function(){
-try{
-var saved=localStorage.getItem('campaign-stats-theme');
-if(saved==='light')document.body.classList.add('light');
-}catch(e){}
-})();
-function fmt(n){
-if(n>=1000000)return 'RM '+(n/1000000).toFixed(1)+'M';
-if(n>=1000)return 'RM '+Math.round(n/1000)+'K';
-return 'RM '+n.toLocaleString();
-}
-function render(s){
-var isLight=document.body.classList.contains('light');
-var html='<div class="top-bar"><div class="top-right">'+
-'<button class="toggle-btn" onclick="toggleMode()">'+(isLight?'Dark mode':'Light mode')+'</button>'+
-'<button class="toggle-btn" onclick="loadData()">Refresh</button>'+
-'</div></div>';
-html+='<div class="stat-row">'+
-'<div class="stat-card card card-blue"><div class="s-accent"></div><div class="s-label">Active Campaigns</div><div class="s-value">'+s.activeCampaigns+'</div><div class="sub-text">Currently running</div></div>'+
-'<div class="stat-card card card-green"><div class="s-accent"></div><div class="s-label">Total Budget</div><div class="s-value">'+fmt(s.totalBudget)+'</div><div class="sub-text">Ads '+fmt(s.totalAdsBudget)+' + KOL '+fmt(s.totalKolBudget)+'</div></div>'+
-'<div class="stat-card card card-amber"><div class="s-accent"></div><div class="s-label">Deliverables Progress</div><div class="s-value">'+s.completedDeliverables+' / '+s.totalDeliverables+'</div><div class="sub-text">Across all active campaigns</div></div>'+
-'<div class="stat-card card card-teal"><div class="s-accent"></div><div class="s-label">Avg Completion</div><div class="s-value">'+s.avgCompletion+'%</div><div class="sub-text">Average across active</div></div>'+
-'</div>';
-html+='<div class="detail-row">';
-html+='<div class="detail-card card"><div class="detail-title">Budget Breakdown</div>';
-html+='<div class="detail-item"><span class="di-label">Ads Budget</span><span class="di-value">'+fmt(s.totalAdsBudget)+'</span></div>';
-html+='<div class="detail-item"><span class="di-label">KOL Budget</span><span class="di-value">'+fmt(s.totalKolBudget)+'</span></div>';
-html+='<div class="detail-item"><span class="di-label">Retainer Received</span><span class="badge '+(s.retainerReceived===s.retainerTotal&&s.retainerTotal>0?'badge-green':'badge-red')+'">'+s.retainerReceived+' / '+s.retainerTotal+'</span></div>';
-html+='<div class="detail-item"><span class="di-label">KOL/Ads Budget Received</span><span class="badge '+(s.kolBudgetReceived===s.kolBudgetTotal&&s.kolBudgetTotal>0?'badge-green':'badge-red')+'">'+s.kolBudgetReceived+' / '+s.kolBudgetTotal+'</span></div>';
-if(s.totalGmv>0){
-html+='<div class="detail-item"><span class="di-label">Total GMV Generated</span><span class="di-value" style="color:#34D399;">'+fmt(s.totalGmv)+'</span></div>';
-}
-html+='</div>';
-html+='<div class="detail-card card"><div class="detail-title">Campaign Types</div>';
-if(s.typeBreakdown&&s.typeBreakdown.length>0){
-for(var i=0;i<s.typeBreakdown.length;i++){
-var t=s.typeBreakdown[i];
-html+='<div class="detail-item"><span class="di-label">'+esc(t.name)+'</span><span class="di-value">'+t.count+'</span></div>';
-}
-}else{
-html+='<div class="detail-item"><span class="di-label" style="opacity:0.4;">No active campaigns</span></div>';
-}
-html+='</div>';
-html+='</div>';
-document.getElementById('dashboard').innerHTML=html;
-}
-function esc(s){
-return s?s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'):'';
-}
-var _lastData=null;
-function _lbarOn(){
-var b=document.getElementById('lbar');
-if(b){b.classList.add('on');}
-}
-function _lbarOff(){
-var b=document.getElementById('lbar');
-if(b){b.classList.remove('on');}
-}
-async function loadData(){
-_lbarOn();
-try{
-var res=await fetch('/api/campaign-stats');
-if(!res.ok)throw new Error('API error');
-_lastData=await res.json();
-_lbarOff();
-render(_lastData);
-}catch(err){
-document.getElementById('dashboard').innerHTML='<div class="loading"><div style="font-size:13px;color:#EF4444;font-weight:600;">Could not load data</div><div style="font-size:11px;color:#888;margin-top:6px;">Check Vercel env vars and Notion integration access.</div></div>';
-}
-}
-window.toggleMode=function(){
-var isLight=document.body.classList.toggle('light');
-try{localStorage.setItem('campaign-stats-theme',isLight?'light':'dark');}catch(e){}
-if(_lastData)_lbarOff();
-render(_lastData);
+(function(){try{if(localStorage.getItem('campaign-stats-theme')==='light')document.body.classList.add('light');}catch(e){}})();
+
+function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+var PROG_COLORS = {
+  videos: '#60A5FA',
+  posters: '#A78BFA',
+  live:    '#F472B6',
+  kol:     '#2DD4BF',
 };
+
+function pctColor(pct) {
+  if (pct >= 80) return '#34D399';
+  if (pct >= 50) return '#FBBF24';
+  return '#F87171';
+}
+
+function render(s) {
+  var isLight = document.body.classList.contains('light');
+  var remaining = s.remainingDeliverables || 0;
+
+  var html = '<div class="top-bar"><div class="top-right">' +
+    '<button class="toggle-btn" onclick="toggleMode()">' + (isLight ? 'Dark mode' : 'Light mode') + '</button>' +
+    '<button class="toggle-btn" onclick="loadData()">Refresh</button>' +
+    '</div></div>';
+
+  // --- Stat cards ---
+  html += '<div class="stat-row">' +
+    '<div class="stat-card card card-blue"><div class="s-accent"></div><div class="s-label">Active Campaigns</div><div class="s-value">' + s.activeCampaigns + '</div><div class="sub-text">Currently running</div></div>' +
+    '<div class="stat-card card card-amber"><div class="s-accent"></div><div class="s-label">Content In Motion</div><div class="s-value">' + s.totalDeliverables + '</div><div class="sub-text">Total planned deliverables</div></div>' +
+    '<div class="stat-card card card-green"><div class="s-accent"></div><div class="s-label">Completed</div><div class="s-value">' + s.completedDeliverables + '</div><div class="sub-text">' + remaining + ' remaining</div></div>' +
+    '<div class="stat-card card card-teal"><div class="s-accent"></div><div class="s-label">Avg Completion</div><div class="s-value">' + s.avgCompletion + '%</div><div class="sub-text">Across active campaigns</div></div>' +
+    '</div>';
+
+  // --- Detail row ---
+  html += '<div class="detail-row">';
+
+  // Left: Content Breakdown (per deliverable type with progress bars)
+  html += '<div class="detail-card card"><div class="detail-title">Content Breakdown</div>';
+  var cb = s.contentBreakdown || {};
+  var types = [
+    { key: 'videos', label: 'Videos', color: PROG_COLORS.videos },
+    { key: 'posters', label: 'Posters', color: PROG_COLORS.posters },
+    { key: 'live', label: 'Livestreams', color: PROG_COLORS.live },
+    { key: 'kol', label: 'KOL Posts', color: PROG_COLORS.kol },
+  ];
+  for (var i = 0; i < types.length; i++) {
+    var t = types[i];
+    var d = cb[t.key] || { planned: 0, completed: 0 };
+    var pct = d.planned > 0 ? Math.round((d.completed / d.planned) * 100) : 0;
+    var rem = d.planned - d.completed;
+    html += '<div class="prog-row">' +
+      '<div class="prog-header"><span class="prog-label">' + t.label + '</span><span class="prog-count">' + d.completed + ' / ' + d.planned + '</span></div>' +
+      '<div class="prog-bar"><div class="prog-fill" style="width:' + Math.max(pct > 0 ? 4 : 0, pct) + '%;background:' + t.color + ';"></div></div>' +
+      (rem > 0 ? '<div class="prog-sub">' + rem + ' remaining</div>' : '<div class="prog-sub" style="color:#34D399;">All done</div>') +
+      '</div>';
+  }
+  html += '</div>';
+
+  // Right: Campaign Progress (per-campaign completion)
+  html += '<div class="detail-card card"><div class="detail-title">Campaign Progress</div>';
+  if (s.campaignDetails && s.campaignDetails.length > 0) {
+    html += '<div class="camp-scroll">';
+    for (var j = 0; j < s.campaignDetails.length; j++) {
+      var c = s.campaignDetails[j];
+      var col = pctColor(c.pct);
+      html += '<div class="camp-item">' +
+        '<span class="camp-name" title="' + esc(c.name) + '">' + esc(c.name) + '</span>' +
+        '<span class="camp-type">' + esc(c.type) + '</span>' +
+        '<div class="camp-bar-wrap"><div class="camp-bar"><div class="camp-bar-fill" style="width:' + Math.max(c.pct > 0 ? 5 : 0, c.pct) + '%;background:' + col + ';"></div></div></div>' +
+        '<span class="camp-pct" style="color:' + col + ';">' + c.pct + '%</span>' +
+        '</div>';
+    }
+    html += '</div>';
+  } else {
+    html += '<div class="empty-msg">No active campaigns</div>';
+  }
+  html += '</div>';
+
+  html += '</div>';
+  document.getElementById('dashboard').innerHTML = html;
+}
+
+var _lastData = null;
+function _lbarOn(){var b=document.getElementById('lbar');if(b)b.classList.add('on');}
+function _lbarOff(){var b=document.getElementById('lbar');if(b)b.classList.remove('on');}
+
+async function loadData() {
+  _lbarOn();
+  try {
+    var res = await fetch('/api/campaign-stats');
+    if (!res.ok) throw new Error('API error');
+    _lastData = await res.json();
+    _lbarOff();
+    render(_lastData);
+  } catch(err) {
+    document.getElementById('dashboard').innerHTML = '<div class="loading"><div style="font-size:13px;color:#EF4444;font-weight:600;">Could not load data</div><div style="font-size:11px;color:#888;margin-top:6px;">' + esc(err.message) + '</div></div>';
+  }
+}
+
+window.toggleMode = function() {
+  var isLight = document.body.classList.toggle('light');
+  try{localStorage.setItem('campaign-stats-theme', isLight ? 'light' : 'dark');}catch(e){}
+  if (_lastData) { _lbarOff(); render(_lastData); }
+};
+
 loadData();
-setInterval(loadData,60*1000);
-document.addEventListener('visibilitychange',function(){if(!document.hidden)loadData();});
+setInterval(loadData, 60 * 1000);
+document.addEventListener('visibilitychange', function(){ if (!document.hidden) loadData(); });
 </script>
 </body>
 </html>

@@ -69,21 +69,23 @@ module.exports = async function handler(req, res) {
     let activeCampaigns = 0;
     let totalDeliverables = 0;
     let completedDeliverables = 0;
-    let totalBudget = 0;
-    let totalAdsBudget = 0;
-    let totalKolBudget = 0;
-    let totalGmv = 0;
-    let retainerReceived = 0;
-    let retainerTotal = 0;
-    let kolBudgetReceived = 0;
-    let kolBudgetTotal = 0;
     const typeCounts = {};
     const completionRates = [];
+
+    // Per-deliverable-type totals
+    let videosPlanned = 0, videosCompleted = 0;
+    let postersPlanned = 0, postersCompleted = 0;
+    let livePlanned = 0, liveCompleted = 0;
+    let kolPlanned = 0, kolCompleted = 0;
+
+    // Per-campaign detail for the breakdown
+    const campaignDetails = [];
 
     for (const page of campaigns) {
       const props = page.properties;
       const status = getStatus(props['Campaign Status']);
       const type = getSelect(props['Campaign Type']);
+      const name = getTitle(props['Campaign Name']);
 
       // Only count active campaigns
       if (status !== 'Active') continue;
@@ -112,17 +114,24 @@ module.exports = async function handler(req, res) {
       totalDeliverables += planned;
       completedDeliverables += done;
 
+      videosPlanned += videos;   videosCompleted += videosDone;
+      postersPlanned += posters; postersCompleted += postersDone;
+      livePlanned += live;       liveCompleted += liveDone;
+      kolPlanned += kolPosts;    kolCompleted += kolDone;
+
       if (planned > 0) {
         completionRates.push(Math.round((done / planned) * 100));
       }
 
-      // Budget fields (if they exist on campaign — read from formula/number props)
-      totalAdsBudget  += getNumber(props['Ads Budget']) || getFormula(props['Ads Budget']);
-      totalKolBudget  += getNumber(props['KOL Budget']) || getFormula(props['KOL Budget']);
-      totalGmv        += getNumber(props['GMV']) || getFormula(props['GMV']);
+      // Campaign detail row
+      campaignDetails.push({
+        name,
+        type: type || 'N/A',
+        planned,
+        done,
+        pct: planned > 0 ? Math.round((done / planned) * 100) : 0,
+      });
     }
-
-    totalBudget = totalAdsBudget + totalKolBudget;
 
     const avgCompletion = completionRates.length > 0
       ? Math.round(completionRates.reduce((a, b) => a + b, 0) / completionRates.length)
@@ -130,19 +139,22 @@ module.exports = async function handler(req, res) {
 
     const typeBreakdown = Object.entries(typeCounts).map(([name, count]) => ({ name, count }));
 
+    // Sort campaigns by completion % ascending (least done first)
+    campaignDetails.sort((a, b) => a.pct - b.pct);
+
     return res.status(200).json({
       activeCampaigns,
-      totalBudget,
-      totalAdsBudget,
-      totalKolBudget,
       totalDeliverables,
       completedDeliverables,
+      remainingDeliverables: totalDeliverables - completedDeliverables,
       avgCompletion,
-      totalGmv,
-      retainerReceived,
-      retainerTotal,
-      kolBudgetReceived,
-      kolBudgetTotal,
+      contentBreakdown: {
+        videos:  { planned: videosPlanned, completed: videosCompleted },
+        posters: { planned: postersPlanned, completed: postersCompleted },
+        live:    { planned: livePlanned, completed: liveCompleted },
+        kol:     { planned: kolPlanned, completed: kolCompleted },
+      },
+      campaignDetails,
       typeBreakdown,
     });
 
