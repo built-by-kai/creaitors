@@ -5,134 +5,292 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Sales & Marketing Dashboard</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  html, body { height: 100%; }
-  body { font-family: 'Inter', -apple-system, sans-serif; padding: 16px; transition: background 0.3s; background: #191919; }
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{height:100%;}
+body{font-family:'Inter',-apple-system,sans-serif;padding:16px;transition:background 0.3s;background:#191919;color:#e8e8e8;}
 
-  .stat-card { background: linear-gradient(145deg, #1E1E1E, #252525); border: 1px solid rgba(255,255,255,0.06); box-shadow: 0 1px 3px rgba(0,0,0,0.3), 0 4px 12px rgba(0,0,0,0.15); }
-  .stat-card:hover { border-color: rgba(255,255,255,0.12); box-shadow: 0 2px 6px rgba(0,0,0,0.4), 0 8px 20px rgba(0,0,0,0.2); }
-  .stat-sub { color: #6B7280; }
-  .toggle-btn { background: #2A2A2A; border: 1px solid rgba(255,255,255,0.12); color: rgba(255,255,255,0.5); }
-  .toggle-btn:hover { border-color: rgba(255,255,255,0.25); color: rgba(255,255,255,0.8); }
+/* Top bar */
+.top-bar{display:flex;justify-content:flex-start;margin-bottom:12px;gap:8px;}
+.ctrl-btn,.toggle-btn{font-family:'Inter',sans-serif;font-size:11px;font-weight:600;line-height:1;padding:6px 12px;border-radius:6px;cursor:pointer;transition:all 0.2s;letter-spacing:0.3px;background:#2A2A2A;border:1px solid rgba(255,255,255,0.12);color:rgba(255,255,255,0.5);}
+.ctrl-btn:hover,.toggle-btn:hover{border-color:rgba(255,255,255,0.25);color:rgba(255,255,255,0.8);filter:brightness(1.2);}
 
-  .card-blue .stat-label { color: #93C5FD; }
-  .card-blue .stat-value { color: #60A5FA; }
-  .card-blue .stat-accent { background: #60A5FA; }
-  .card-amber .stat-label { color: #FCD34D; }
-  .card-amber .stat-value { color: #FBBF24; }
-  .card-amber .stat-accent { background: #FBBF24; }
-  .card-green .stat-label { color: #6EE7B7; }
-  .card-green .stat-value { color: #34D399; }
-  .card-green .stat-accent { background: #34D399; }
-  .card-red .stat-label { color: #FCA5A5; }
-  .card-red .stat-value { color: #F87171; }
-  .card-red .stat-accent { background: #F87171; }
+/* Stat cards row */
+.stat-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:18px;}
+.stat-card{border-radius:14px;padding:22px 24px;transition:all 0.25s ease;position:relative;overflow:hidden;background:linear-gradient(145deg,#1E1E1E,#252525);border:1px solid rgba(255,255,255,0.06);box-shadow:0 1px 3px rgba(0,0,0,0.3),0 4px 12px rgba(0,0,0,0.15);}
+.stat-card:hover{border-color:rgba(255,255,255,0.12);box-shadow:0 2px 6px rgba(0,0,0,0.4),0 8px 20px rgba(0,0,0,0.2);}
+.stat-accent{position:absolute;top:18px;right:20px;width:8px;height:8px;border-radius:50%;opacity:0.8;}
+.stat-label{font-size:10.5px;font-weight:600;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:12px;}
+.stat-value{font-size:36px;font-weight:800;letter-spacing:-1.5px;line-height:1;}
+.stat-sub{font-size:11.5px;margin-top:10px;font-weight:500;letter-spacing:-0.1px;color:#6B7280;}
 
-  body.light { background: #ffffff; }
-  body.light .stat-card { background: linear-gradient(145deg, #ffffff, #F7F8FA); border: 1px solid rgba(0,0,0,0.06); box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.03); }
-  body.light .stat-card:hover { border-color: rgba(0,0,0,0.1); box-shadow: 0 2px 6px rgba(0,0,0,0.06), 0 8px 20px rgba(0,0,0,0.04); }
-  body.light .stat-sub { color: #9CA3AF; }
-  body.light .card-blue .stat-label { color: #2563EB; } body.light .card-blue .stat-value { color: #1D4ED8; } body.light .card-blue .stat-accent { background: #2563EB; }
-  body.light .card-amber .stat-label { color: #D97706; } body.light .card-amber .stat-value { color: #B45309; } body.light .card-amber .stat-accent { background: #D97706; }
-  body.light .card-green .stat-label { color: #059669; } body.light .card-green .stat-value { color: #047857; } body.light .card-green .stat-accent { background: #059669; }
-  body.light .card-red .stat-label { color: #DC2626; } body.light .card-red .stat-value { color: #B91C1C; } body.light .card-red .stat-accent { background: #DC2626; }
-  body.light .toggle-btn { background: #F3F4F6; border: 1px solid rgba(0,0,0,0.08); color: rgba(0,0,0,0.4); }
-  body.light .toggle-btn:hover { border-color: rgba(0,0,0,0.15); color: rgba(0,0,0,0.6); }
+.card-blue .stat-label{color:#93C5FD;} .card-blue .stat-value{color:#60A5FA;} .card-blue .stat-accent{background:#60A5FA;}
+.card-amber .stat-label{color:#FCD34D;} .card-amber .stat-value{color:#FBBF24;} .card-amber .stat-accent{background:#FBBF24;}
+.card-green .stat-label{color:#6EE7B7;} .card-green .stat-value{color:#34D399;} .card-green .stat-accent{background:#34D399;}
+.card-red .stat-label{color:#FCA5A5;} .card-red .stat-value{color:#F87171;} .card-red .stat-accent{background:#F87171;}
 
-  .top-bar { display: flex; justify-content: flex-start; margin-bottom: 12px; }
-  .toggle-btn { font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 600; line-height: 1; padding: 6px 12px; border-radius: 6px; cursor: pointer; transition: all 0.2s; letter-spacing: 0.3px; }
-  .toggle-btn:hover { filter: brightness(1.2); }
+/* Tabs */
+.tab-row{display:flex;gap:0;background:#1A1A1A;border:1px solid rgba(255,255,255,0.07);border-radius:11px;padding:4px;margin-bottom:16px;width:fit-content;}
+.tab{font-family:'Inter',sans-serif;font-size:12px;font-weight:700;padding:7px 20px;border-radius:8px;cursor:pointer;border:none;background:transparent;color:rgba(255,255,255,0.35);transition:all 0.2s;letter-spacing:0.1px;user-select:none;}
+.tab:hover{color:rgba(255,255,255,0.65);}
+.tab.active-won{background:rgba(52,211,153,0.15);color:#34D399;}
+.tab.active-lost{background:rgba(248,113,113,0.15);color:#F87171;}
 
-  .loading { display: flex; align-items: center; justify-content: center; height: 100px; flex-direction: column; gap: 10px; }
-  .spinner { width: 20px; height: 20px; border: 2px solid rgba(128,128,128,0.15); border-top-color: #666; border-radius: 50%; animation: spin 0.8s linear infinite; }
-  @keyframes spin { to { transform: rotate(360deg); } }
-  .loading-text { font-size: 11px; color: #666; }
+/* Dashboard card (deals section) */
+.dashboard-card{background:linear-gradient(145deg,#1E1E1E,#252525);border:1px solid rgba(255,255,255,0.06);box-shadow:0 1px 3px rgba(0,0,0,0.3),0 4px 12px rgba(0,0,0,0.15);border-radius:14px;padding:24px;transition:border-color 0.3s;}
+.dashboard-card.card-won{border-color:rgba(52,211,153,0.15);}
+.dashboard-card.card-lost{border-color:rgba(248,113,113,0.15);}
 
-  .stat-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
-  .stat-card { border-radius: 14px; padding: 22px 24px; transition: all 0.25s ease; position: relative; overflow: hidden; }
-  .stat-accent { position: absolute; top: 18px; right: 20px; width: 8px; height: 8px; border-radius: 50%; opacity: 0.8; }
-  .stat-label { font-size: 10.5px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 12px; }
-  .stat-value { font-size: 36px; font-weight: 800; letter-spacing: -1.5px; line-height: 1; }
-  .stat-sub { font-size: 11.5px; margin-top: 10px; font-weight: 500; letter-spacing: -0.1px; }
+/* Stats grid inside deals */
+.stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:24px;}
+.dstat-card{display:flex;flex-direction:column;}
+.dstat-label{font-size:11px;color:#707070;text-transform:uppercase;letter-spacing:0.6px;margin-bottom:10px;font-weight:600;}
+.dstat-value{font-size:38px;font-weight:800;margin-bottom:4px;line-height:1;letter-spacing:-1.5px;}
+.dstat-value.won-col{color:#34D399;}
+.dstat-value.lost-col{color:#F87171;}
+.dstat-value.val-col{color:#FBBF24;}
+.dstat-subtext{font-size:12px;color:#606060;}
 
-  @media (max-width: 800px) { .stat-row { grid-template-columns: repeat(2, 1fr); } }
-  @media (max-width: 480px) { .stat-row { grid-template-columns: 1fr; } }
+/* Content grid (deal log + breakdown) */
+.content-grid{display:grid;grid-template-columns:1fr 1fr;gap:0;height:280px;}
+.section{display:flex;flex-direction:column;overflow:hidden;min-height:0;}
+.section-left{border-right:1px solid rgba(255,255,255,0.06);padding-right:24px;}
+.section-right{padding-left:24px;}
+.section-title{font-size:12px;font-weight:700;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.6px;margin-bottom:14px;flex-shrink:0;}
+
+.deal-log,.breakdown-scroll{overflow-y:auto;flex:1;min-height:0;padding-right:6px;}
+.deal-log::-webkit-scrollbar,.breakdown-scroll::-webkit-scrollbar{width:4px;}
+.deal-log::-webkit-scrollbar-track,.breakdown-scroll::-webkit-scrollbar-track{background:transparent;}
+.deal-log::-webkit-scrollbar-thumb,.breakdown-scroll::-webkit-scrollbar-thumb{background:#2e2e2e;border-radius:3px;}
+
+.deal-item{display:flex;flex-direction:column;gap:0;margin-bottom:10px;padding-bottom:10px;border-bottom:1px solid rgba(255,255,255,0.05);}
+.deal-item:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0;}
+.deal-name{font-size:13px;font-weight:600;color:rgba(255,255,255,0.88);margin-bottom:2px;}
+.deal-company{font-size:11px;color:#606070;margin-bottom:6px;}
+.deal-info{display:flex;gap:7px;align-items:center;}
+.deal-tag{font-size:10px;background:rgba(255,255,255,0.07);color:#909090;padding:3px 7px;border-radius:4px;white-space:nowrap;}
+.deal-amount-won{font-size:13px;font-weight:700;color:#34D399;}
+.deal-amount-lost{font-size:13px;font-weight:700;color:#F87171;}
+.deal-open{font-size:11px;color:#505050;margin-left:auto;cursor:pointer;transition:color 0.15s;}
+.deal-open:hover{color:#aaa;}
+
+.bk-item{display:flex;flex-direction:column;gap:5px;margin-bottom:13px;}
+.bk-item:last-child{margin-bottom:0;}
+.bk-header{display:flex;justify-content:space-between;align-items:baseline;gap:8px;}
+.bk-label{font-size:12px;color:#909090;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.bk-val{font-size:12px;font-weight:700;white-space:nowrap;flex-shrink:0;}
+.bk-val.won-col{color:#34D399;}
+.bk-val.lost-col{color:#F87171;}
+.bk-bar{background:rgba(255,255,255,0.06);border-radius:3px;height:5px;overflow:hidden;}
+.bk-fill{height:100%;border-radius:3px;}
+
+.empty-msg{font-size:12px;color:#4B5563;font-style:italic;padding:10px 0;}
+
+/* Loading */
+.loading{display:flex;align-items:center;justify-content:center;height:100px;flex-direction:column;gap:10px;}
+.spinner{width:20px;height:20px;border:2px solid rgba(128,128,128,0.15);border-top-color:#666;border-radius:50%;animation:spin 0.8s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+/* Loading bar */
+#lbar{position:fixed;top:0;left:0;right:0;height:2px;z-index:9999;pointer-events:none;background:transparent;}
+#lbar.on{background:linear-gradient(90deg,#60A5FA,#2DD4BF,#A78BFA);animation:lbar-anim 1.2s ease-in-out infinite;}
+@keyframes lbar-anim{0%{opacity:1;transform:scaleX(0);transform-origin:left}60%{opacity:1;transform:scaleX(0.85);transform-origin:left}100%{opacity:0;transform:scaleX(1);transform-origin:left}}
+
+/* ====== LIGHT MODE ====== */
+body.light{background:#f5f5f5;color:#111;}
+body.light .ctrl-btn,body.light .toggle-btn{background:#e8e8e8;border-color:rgba(0,0,0,0.08);color:rgba(0,0,0,0.4);}
+body.light .ctrl-btn:hover,body.light .toggle-btn:hover{border-color:rgba(0,0,0,0.15);color:rgba(0,0,0,0.6);}
+
+body.light .stat-card{background:linear-gradient(145deg,#ffffff,#F7F8FA);border:1px solid rgba(0,0,0,0.06);box-shadow:0 1px 3px rgba(0,0,0,0.04),0 4px 12px rgba(0,0,0,0.03);}
+body.light .stat-card:hover{border-color:rgba(0,0,0,0.1);box-shadow:0 2px 6px rgba(0,0,0,0.06),0 8px 20px rgba(0,0,0,0.04);}
+body.light .stat-sub{color:#9CA3AF;}
+body.light .card-blue .stat-label{color:#2563EB;} body.light .card-blue .stat-value{color:#1D4ED8;} body.light .card-blue .stat-accent{background:#2563EB;}
+body.light .card-amber .stat-label{color:#D97706;} body.light .card-amber .stat-value{color:#B45309;} body.light .card-amber .stat-accent{background:#D97706;}
+body.light .card-green .stat-label{color:#059669;} body.light .card-green .stat-value{color:#047857;} body.light .card-green .stat-accent{background:#059669;}
+body.light .card-red .stat-label{color:#DC2626;} body.light .card-red .stat-value{color:#B91C1C;} body.light .card-red .stat-accent{background:#DC2626;}
+
+body.light .tab-row{background:#eaeaea;border-color:rgba(0,0,0,0.08);}
+body.light .tab{color:rgba(0,0,0,0.3);}
+body.light .tab:hover{color:rgba(0,0,0,0.6);}
+body.light .tab.active-won{background:rgba(16,185,129,0.12);color:#059669;}
+body.light .tab.active-lost{background:rgba(220,38,38,0.1);color:#DC2626;}
+
+body.light .dashboard-card{background:linear-gradient(145deg,#fff,#f8f9fa);border-color:rgba(0,0,0,0.07);box-shadow:0 1px 3px rgba(0,0,0,0.04);}
+body.light .dashboard-card.card-won{border-color:rgba(16,185,129,0.2);}
+body.light .dashboard-card.card-lost{border-color:rgba(220,38,38,0.15);}
+body.light .dstat-label{color:#999;}
+body.light .dstat-value.won-col{color:#059669;}
+body.light .dstat-value.lost-col{color:#DC2626;}
+body.light .dstat-value.val-col{color:#D97706;}
+body.light .dstat-subtext{color:#aaa;}
+body.light .section-left{border-right-color:rgba(0,0,0,0.07);}
+body.light .section-title{color:rgba(0,0,0,0.3);}
+body.light .deal-name{color:#111;}
+body.light .deal-company{color:#aaa;}
+body.light .deal-tag{background:rgba(0,0,0,0.06);color:#777;}
+body.light .deal-amount-won{color:#059669;}
+body.light .deal-amount-lost{color:#DC2626;}
+body.light .deal-open{color:#ccc;}
+body.light .deal-item{border-bottom-color:rgba(0,0,0,0.06);}
+body.light .bk-label{color:#777;}
+body.light .bk-val.won-col{color:#059669;}
+body.light .bk-val.lost-col{color:#DC2626;}
+body.light .bk-bar{background:rgba(0,0,0,0.07);}
+
+/* ====== RESPONSIVE ====== */
+@media(max-width:800px){.stat-row{grid-template-columns:repeat(2,1fr);}}
+@media(max-width:480px){.stat-row{grid-template-columns:1fr;}}
+@media(max-width:700px){
+  .stats-grid,.content-grid{grid-template-columns:1fr;}
+  .content-grid{height:auto;}
+  .stats-grid{gap:14px;margin-bottom:18px;}
+  .dashboard-card{padding:16px;}
+  .section{overflow:visible;}
+  .deal-log,.breakdown-scroll{max-height:240px;overflow-y:auto;}
+  .section-left{border-right:none;padding-right:0;border-bottom:1px solid rgba(255,255,255,0.05);padding-bottom:16px;}
+  .section-right{padding-left:0;padding-top:16px;}
+  .deal-open{display:none;}
+  .dstat-value{font-size:30px;}
+  .tab{padding:6px 14px;font-size:11px;}
+}
 </style>
 </head>
 <body>
-
-<div id="dashboard" class="loading">
-  <div class="spinner"></div>
-  <div class="loading-text">Loading...</div>
-</div>
+<div id="lbar"></div>
+<div id="sales-cards" class="loading"><div class="spinner"></div><div style="font-size:11px;color:#666;">Loading...</div></div>
+<div id="deals-section"></div>
 
 <script>
-if (localStorage.getItem('sales-theme') === 'light') {
-  document.body.classList.add('light');
+try{if(localStorage.getItem('sales-theme')==='light')document.body.classList.add('light');}catch(e){}
+
+var _isMobile=/Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
+function openNotion(url){if(!url||_isMobile)return;window.open(url,'_blank');}
+
+var _tab='won';
+var _salesData=null;
+var _dealsData=null;
+
+function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+function fmt(n){
+  if(!n)return'RM 0';
+  if(n>=1000000)return'RM '+(n/1000000).toFixed(1)+'M';
+  if(n>=1000)return'RM '+(n/1000).toFixed(1)+'K';
+  return'RM '+n.toLocaleString();
 }
 
-function render(s) {
-  var isLight = document.body.classList.contains('light');
-  var el = document.getElementById('dashboard');
-  el.className = '';
-  el.innerHTML =
-    '<div class="top-bar"><button class="toggle-btn" onclick="toggleMode()">' + (isLight ? 'Dark mode' : 'Light mode') + '</button><button class="toggle-btn" onclick="loadData()" style="margin-left:8px;">Refresh</button></div>' +
-    '<div class="stat-row">' +
-
-    '<div class="stat-card card-blue">' +
-      '<div class="stat-accent"></div>' +
-      '<div class="stat-label">Active Leads</div>' +
-      '<div class="stat-value">' + s.activeLeads.count + '</div>' +
-      '<div class="stat-sub">' + (s.activeLeads.count > 0 ? s.activeLeads.count + ' in pipeline' : 'No active leads') + '</div>' +
-    '</div>' +
-
-    '<div class="stat-card card-amber">' +
-      '<div class="stat-accent"></div>' +
-      '<div class="stat-label">Follow-Ups Due</div>' +
-      '<div class="stat-value">' + s.followUpsDue.count + '</div>' +
-      '<div class="stat-sub">' + (s.followUpsDue.count > 0 ? s.followUpsDue.count + ' need action' : 'All caught up') + '</div>' +
-    '</div>' +
-
-    '<div class="stat-card card-green">' +
-      '<div class="stat-accent"></div>' +
-      '<div class="stat-label">Won This Month</div>' +
-      '<div class="stat-value">' + s.wonThisMonth.count + '</div>' +
-      '<div class="stat-sub">' + (s.wonThisMonth.count > 0 ? s.wonThisMonth.count + ' closed deals' : 'None yet') + '</div>' +
-    '</div>' +
-
-    '<div class="stat-card card-red">' +
-      '<div class="stat-accent"></div>' +
-      '<div class="stat-label">Lost This Month</div>' +
-      '<div class="stat-value">' + s.lostThisMonth.count + '</div>' +
-      '<div class="stat-sub">' + (s.lostThisMonth.count > 0 ? s.lostThisMonth.count + ' lost deals' : 'None lost') + '</div>' +
-    '</div>' +
-
+/* ===== RENDER SALES STAT CARDS ===== */
+function renderSalesCards(s){
+  var isLight=document.body.classList.contains('light');
+  var el=document.getElementById('sales-cards');
+  el.className='';
+  el.innerHTML=
+    '<div class="top-bar">'+
+      '<button class="toggle-btn" onclick="toggleMode()">'+(isLight?'Dark mode':'Light mode')+'</button>'+
+      '<button class="toggle-btn" onclick="loadAll()">Refresh</button>'+
+    '</div>'+
+    '<div class="stat-row">'+
+      '<div class="stat-card card-blue"><div class="stat-accent"></div><div class="stat-label">Active Leads</div><div class="stat-value">'+s.activeLeads.count+'</div><div class="stat-sub">'+(s.activeLeads.count>0?s.activeLeads.count+' in pipeline':'No active leads')+'</div></div>'+
+      '<div class="stat-card card-amber"><div class="stat-accent"></div><div class="stat-label">Follow-Ups Due</div><div class="stat-value">'+s.followUpsDue.count+'</div><div class="stat-sub">'+(s.followUpsDue.count>0?s.followUpsDue.count+' need action':'All caught up')+'</div></div>'+
+      '<div class="stat-card card-green"><div class="stat-accent"></div><div class="stat-label">Won This Month</div><div class="stat-value">'+s.wonThisMonth.count+'</div><div class="stat-sub">'+(s.wonThisMonth.count>0?s.wonThisMonth.count+' closed deals':'None yet')+'</div></div>'+
+      '<div class="stat-card card-red"><div class="stat-accent"></div><div class="stat-label">Lost This Month</div><div class="stat-value">'+s.lostThisMonth.count+'</div><div class="stat-sub">'+(s.lostThisMonth.count>0?s.lostThisMonth.count+' lost deals':'None lost')+'</div></div>'+
     '</div>';
 }
 
-var _lastData = null;
-async function loadData() {
-  try {
-    var res = await fetch('/api/sales');
-    if (!res.ok) throw new Error('API error');
-    _lastData = await res.json();
-    render(_lastData);
-  } catch (err) {
-    document.getElementById('dashboard').innerHTML =
-      '<div class="loading"><div style="font-size:13px; color:#EF4444; font-weight:600;">Could not load data</div><div style="font-size:11px; color:#888; margin-top:6px;">Check Vercel env vars and Notion integration access.</div></div>';
-  }
-}
-
-window.toggleMode = function() {
-  var isLight = document.body.classList.toggle('light');
-  localStorage.setItem('sales-theme', isLight ? 'light' : 'dark');
-  if (_lastData) render(_lastData);
+/* ===== RENDER DEALS SECTION ===== */
+var BAR_COLORS={
+  won:['#34D399','#2DD4BF','#60A5FA','#A78BFA','#FBBF24','#F472B6'],
+  lost:['#F87171','#FBBF24','#A78BFA','#60A5FA','#2DD4BF','#34D399'],
 };
 
-loadData();
-setInterval(loadData, 60 * 1000);
-document.addEventListener('visibilitychange', function() { if (!document.hidden) loadData(); });
+function renderDeals(deals,amtClass){
+  if(!deals||!deals.length)return'<div class="empty-msg">No deals this month</div>';
+  return deals.map(function(d){
+    var click=d.url?' onclick="openNotion(\''+d.url+'\')" style="cursor:pointer;"':'';
+    var openTxt=d.url?'<span class="deal-open">Open &rarr;</span>':'';
+    var tag=d.source?'<span class="deal-tag">'+esc(d.source)+'</span>':'';
+    var reason=d.reason&&d.reason!=='No reason given'?'<span class="deal-tag">'+esc(d.reason)+'</span>':'';
+    return'<div class="deal-item"'+click+'><div class="deal-name">'+esc(d.name)+'</div>'+(d.company?'<div class="deal-company">'+esc(d.company)+'</div>':'')+
+      '<div class="deal-info">'+(reason||tag)+'<span class="'+amtClass+'">'+fmt(d.value)+'</span>'+openTxt+'</div></div>';
+  }).join('');
+}
+
+function renderBreakdown(breakdown,valClass,colors){
+  if(!breakdown||!breakdown.length)return'<div class="empty-msg">No data</div>';
+  var maxVal=Math.max.apply(null,breakdown.map(function(b){return b.value||b.count||0;}));
+  return breakdown.map(function(b,i){
+    var metric=b.value>0?b.value:(b.count||0);
+    var pct=maxVal>0?Math.max(metric>0?5:0,Math.round(metric/maxVal*100)):0;
+    var displayVal=b.value>0?fmt(b.value):(b.count>0?b.count+' deal'+(b.count>1?'s':''):'—');
+    var color=colors[i%colors.length];
+    return'<div class="bk-item"><div class="bk-header"><span class="bk-label" title="'+esc(b.label)+'">'+esc(b.label)+'</span><span class="bk-val '+valClass+'">'+displayVal+'</span></div>'+
+      '<div class="bk-bar"><div class="bk-fill" style="width:'+pct+'%;background:'+color+';"></div></div></div>';
+  }).join('');
+}
+
+function renderDealsSection(d){
+  if(!d)return;
+  var isWon=_tab==='won';
+  var data=isWon?d.won:d.lost;
+  var tabs='<div class="tab-row">'+
+    '<button class="tab'+(isWon?' active-won':'')+'" onclick="switchTab(\'won\')">✓ Won Deals</button>'+
+    '<button class="tab'+(!isWon?' active-lost':'')+'" onclick="switchTab(\'lost\')">✗ Lost Deals</button>'+
+    '</div>';
+  var thisMonthNote=data.thisMonth>0?d.monthLabel+': '+data.thisMonth+(data.thisMonth===1?' deal':' deals'):'None in '+d.monthLabel;
+  var thisMonthValNote=data.thisMonthValue>0?d.monthLabel+': '+fmt(data.thisMonthValue):'None in '+d.monthLabel;
+  var statsHtml='<div class="stats-grid">'+
+    '<div class="dstat-card"><div class="dstat-label">'+(isWon?'Deals Won':'Deals Lost')+' (All Time)</div><div class="dstat-value '+(isWon?'won-col':'lost-col')+'">'+data.total+'</div><div class="dstat-subtext">'+thisMonthNote+'</div></div>'+
+    '<div class="dstat-card"><div class="dstat-label">'+(isWon?'Total Won Value':'Total Lost Value')+'</div><div class="dstat-value val-col">'+fmt(data.totalValue)+'</div><div class="dstat-subtext">'+thisMonthValNote+'</div></div>'+
+    '</div>';
+  var dealsHtml=renderDeals(data.deals,isWon?'deal-amount-won':'deal-amount-lost');
+  var bkHtml=renderBreakdown(data.breakdown,isWon?'won-col':'lost-col',BAR_COLORS[_tab]);
+  var bkTitle=isWon?'By Source':'Loss Reasons';
+  var cardClass='dashboard-card '+(isWon?'card-won':'card-lost');
+  document.getElementById('deals-section').innerHTML=tabs+'<div class="'+cardClass+'">'+statsHtml+
+    '<div class="content-grid">'+
+      '<div class="section section-left"><div class="section-title">Deal Log</div><div class="deal-log">'+dealsHtml+'</div></div>'+
+      '<div class="section section-right"><div class="section-title">'+bkTitle+'</div><div class="breakdown-scroll">'+bkHtml+'</div></div>'+
+    '</div></div>';
+}
+
+/* ===== CONTROLS ===== */
+window.switchTab=function(tab){_tab=tab;renderDealsSection(_dealsData);};
+
+window.toggleMode=function(){
+  var isLight=document.body.classList.toggle('light');
+  try{localStorage.setItem('sales-theme',isLight?'light':'dark');}catch(e){}
+  if(_salesData)renderSalesCards(_salesData);
+  if(_dealsData)renderDealsSection(_dealsData);
+};
+
+function _lbarOn(){var b=document.getElementById('lbar');if(b)b.classList.add('on');}
+function _lbarOff(){var b=document.getElementById('lbar');if(b)b.classList.remove('on');}
+
+/* ===== DATA LOADING ===== */
+async function loadAll(){
+  _lbarOn();
+  try{
+    var [salesRes,dealsRes]=await Promise.all([
+      fetch('/api/sales'),
+      fetch('/api/crm?view=deals')
+    ]);
+    if(salesRes.ok){
+      _salesData=await salesRes.json();
+      renderSalesCards(_salesData);
+    }
+    if(dealsRes.ok){
+      _dealsData=await dealsRes.json();
+      renderDealsSection(_dealsData);
+    }
+  }catch(err){
+    document.getElementById('sales-cards').innerHTML='<div class="loading"><div style="font-size:13px;color:#EF4444;font-weight:600;">Could not load data</div><div style="font-size:11px;color:#666;margin-top:6px;">'+esc(err.message)+'</div></div>';
+  }
+  _lbarOff();
+}
+
+loadAll();
+setInterval(loadAll,60000);
+document.addEventListener('visibilitychange',function(){if(!document.hidden)loadAll();});
 </script>
 </body>
 </html>
