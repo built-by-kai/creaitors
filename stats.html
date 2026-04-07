@@ -103,7 +103,7 @@
 
   .top-bar {
     display: flex;
-    justify-content: flex-end;
+    justify-content: flex-start;
     margin-bottom: 12px;
     gap: 8px;
   }
@@ -229,7 +229,7 @@ function render(d) {
 
   // Campaign sub-text
   var c = _campData || {};
-  var campSub = c.remainingDeliverables > 0 ? c.remainingDeliverables + ' remaining' : 'All delivered';
+  var campSub = c.remainingDeliverables > 0 ? c.remainingDeliverables + ' deliverables remaining' : 'All delivered';
   var compSub = '';
   if (c.contentBreakdown) {
     var cb = c.contentBreakdown;

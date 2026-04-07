@@ -105,7 +105,7 @@ module.exports = async function handler(req, res) {
 
       tasksTotal++;
       if (status === 'Waiting')              tasksWaiting++;
-      if (status === 'Ready to Work' || status === 'In Progress' || status === 'Not started') tasksInProgress++;
+      if (status === 'Ready to Work' || status === 'In progress' || status === 'Not started') tasksInProgress++;
       if (status === 'Pending QC Review')    tasksQC++;
       if (status === 'Review Needed')        tasksRevision++;
 

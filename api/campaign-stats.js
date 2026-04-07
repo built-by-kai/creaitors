@@ -57,6 +57,12 @@ module.exports = async function handler(req, res) {
       if (r.type === 'array') {
         return (r.array || []).reduce((sum, item) => {
           if (item.type === 'number') return sum + (item.number || 0);
+          if (item.type === 'formula') {
+            const f = item.formula;
+            if (f.type === 'number') return sum + (f.number || 0);
+            if (f.type === 'boolean') return sum + (f.boolean ? 1 : 0);
+            if (f.type === 'string') return sum + (parseFloat(f.string) || 0);
+          }
           return sum;
         }, 0);
       }
