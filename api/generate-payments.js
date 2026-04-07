@@ -117,6 +117,7 @@ module.exports = async function handler(req, res) {
           headers,
           body: JSON.stringify({
             parent: { database_id: CLIENT_PAYMENTS_DB_ID },
+            icon: { type: 'emoji', emoji: '💰' },
             properties: {
               'Payment Record': {
                 title: [{ text: { content: rowName } }],
