@@ -57,11 +57,13 @@ body{background:#191919;color:#e8e8e8;}
 .bar-red{background:#EF4444;} .bar-orange{background:#F97316;} .bar-yellow{background:#EAB308;} .bar-blue{background:#3B82F6;} .bar-teal{background:#2DD4BF;} .bar-gray{background:#333;}
 
 .row-body{min-width:0;}
-.row-title{font-size:12.5px;font-weight:600;color:rgba(255,255,255,0.85);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:4px;}
+.row-title{font-size:12.5px;font-weight:600;color:rgba(255,255,255,0.85);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:2px;}
+.row-content-name{font-size:10.5px;font-weight:500;color:rgba(255,255,255,0.4);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:4px;}
 .row-meta{display:flex;align-items:center;gap:4px;flex-wrap:wrap;}
 .meta-tag{font-size:9.5px;font-weight:500;padding:2px 7px;border-radius:4px;white-space:nowrap;background:rgba(255,255,255,0.05);color:rgba(255,255,255,0.35);}
 
 .row-right{display:flex;flex-direction:column;align-items:flex-end;gap:4px;min-width:80px;}
+.badges{display:flex;flex-wrap:wrap;gap:5px;justify-content:flex-end;}
 .badge{font-size:9px;font-weight:700;letter-spacing:0.3px;text-transform:uppercase;padding:3px 8px;border-radius:5px;white-space:nowrap;}
 .badge-overdue{background:rgba(239,68,68,0.12);color:#F87171;}
 .badge-today{background:rgba(251,146,60,0.12);color:#FB923C;}
@@ -113,6 +115,7 @@ body.light .section-title{color:rgba(0,0,0,0.35);}
 body.light .row{border-bottom-color:rgba(0,0,0,0.04);}
 body.light .row:hover{background:rgba(0,0,0,0.02);}
 body.light .row-title{color:#222;}
+body.light .row-content-name{color:rgba(0,0,0,0.4);}
 body.light .meta-tag{background:rgba(0,0,0,0.04);color:rgba(0,0,0,0.4);}
 body.light .date-text{color:#bbb;}
 body.light .badge-overdue{background:rgba(239,68,68,0.08);color:#DC2626;}
@@ -161,7 +164,7 @@ function renderBadges(item){
   if(item.reasons.includes('Due Today'))h+='<span class="badge badge-today">Due Today</span>';
   if(item.reasons.includes('Revision'))h+='<span class="badge badge-revision">Revision</span>';
   if(item.reasons.includes('QC Review'))h+='<span class="badge badge-qc-content">Content QC</span>';
-  if(item.reasons.includes('Pending QC'))h+='<span class="badge badge-qc-task">Task QC</span>';
+  if(item.reasons.includes('Pending QC'))h+='<span class="badge badge-qc-task">Pending Task QC</span>';
   return h;
 }
 
@@ -175,9 +178,10 @@ function renderRow(item){
   if(item.people&&item.people.length)meta+='<span class="meta-tag">'+esc(item.people.join(', '))+'</span>';
   var dateStr=item.deadline?fmtDate(item.deadline):'';
   var url=item.url?(item.url.replace(/'/g,"\\'")):'' ;
+  var contentLine = item.contentName ? '<div class="row-content-name">'+esc(item.contentName)+'</div>' : '';
   return '<div class="row" onclick="openUrl(\''+url+'\')">'
     +'<div class="bar '+bar+'"></div>'
-    +'<div class="row-body"><div class="row-title">'+esc(item.title)+'</div>'+(meta?'<div class="row-meta">'+meta+'</div>':'')+'</div>'
+    +'<div class="row-body"><div class="row-title">'+esc(item.title)+'</div>'+contentLine+(meta?'<div class="row-meta">'+meta+'</div>':'')+'</div>'
     +'<div class="row-right"><div class="badges">'+renderBadges(item)+'</div>'+(dateStr?'<div class="date-text">'+dateStr+'</div>':'')+'</div>'
     +'</div>';
 }
@@ -247,7 +251,7 @@ function _lbarOff(){var b=document.getElementById('lbar');if(b)b.classList.remov
 
 async function loadData(){
   _lbarOn();
-  var btn=document.getElementById('rbtn');if(btn)btn.classList.add('loading');
+  var btn=document.getElementById('rbtn');if(btn){btn.disabled=true;btn.textContent='Loading...';}
   try{
     if(!_data){try{var c=JSON.parse(localStorage.getItem('btl-cache'));if(c){render(c);}}catch(e){}}
     var res=await fetch('/api/bottlenecks');
@@ -260,7 +264,7 @@ async function loadData(){
     _lbarOff();
     if(!_data)document.getElementById('root').innerHTML='<div class="loading"><div style="font-size:12px;color:#F87171;font-weight:600;">Failed to load</div><div style="font-size:10px;color:#666;margin-top:6px;">'+esc(err.message)+'</div></div>';
   }finally{
-    var b=document.getElementById('rbtn');if(b)b.classList.remove('loading');
+    var b=document.getElementById('rbtn');if(b){b.disabled=false;b.textContent='Refresh';}
   }
 }
 loadData();

@@ -141,6 +141,23 @@ module.exports = async function handler(req, res) {
       contentItems.push({ title, status, deadline, daysOverdue, channel, type, people, client, reasons, url: page.url });
     }
 
+    // Batch-resolve Content Production names for tasks
+    const taskContentIds = new Set();
+    for (const page of taskPages) {
+      getRelIds(page.properties['Content Production']).slice(0, 1).forEach(id => taskContentIds.add(id));
+    }
+    const contentNameCache = {};
+    await Promise.all(Array.from(taskContentIds).map(async id => {
+      const page = await fetchPage(id).catch(() => null);
+      if (!page) return;
+      for (const prop of Object.values(page.properties)) {
+        if (prop.type === 'title' && prop.title?.length) {
+          contentNameCache[id] = prop.title.map(t => t.plain_text).join('');
+          break;
+        }
+      }
+    }));
+
     // Task QC bottlenecks
     for (const page of taskPages) {
       const p       = page.properties;
@@ -150,6 +167,8 @@ module.exports = async function handler(req, res) {
       const qcNotes = p['QC Notes']?.rich_text?.map(t => t.plain_text).join('') || null;
       const people  = resolveNames(getRelIds(p['Assigned To']));
       const campaign = getRollupText(p['Campaign']) || null;
+      const contentId = getRelIds(p['Content Production'])[0];
+      const contentName = contentId ? (contentNameCache[contentId] || null) : null;
 
       const isOverdue   = dueDate && dueDate < todayStr;
       const isDueToday  = dueDate === todayStr;
@@ -161,7 +180,7 @@ module.exports = async function handler(req, res) {
       if (isOverdue)  reasons.push('Overdue');
       if (isDueToday) reasons.push('Due Today');
 
-      taskItems.push({ title, status, deadline: dueDate, daysOverdue, people, campaign, qcNotes, reasons, url: page.url });
+      taskItems.push({ title, status, deadline: dueDate, daysOverdue, people, campaign, contentName, qcNotes, reasons, url: page.url });
     }
 
     const sortFn = (a, b) => {
