@@ -106,8 +106,6 @@
         window.toggleMode=function(){var isLight=document.body.classList.toggle('light');try{localStorage.setItem('crm-theme',isLight?'light':'dark');}catch(e){}if(_lastData)_lbarOff();render(_lastData);};
         window.applyMonthYear=function(){var m=parseInt(document.getElementById('selMonth').value);var y=parseInt(document.getElementById('selYear').value);setFromMonthYear(m,y);loadData();};
         loadData();
-        setInterval(loadData,600000);
-        document.addEventListener('visibilitychange',function(){if(!document.hidden)loadData();});
-    </script>
+        setInterval(loadData,600000);    </script>
 </body>
 </html>
