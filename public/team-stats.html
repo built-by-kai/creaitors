@@ -1,190 +1,182 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Creaitors · Team Stats</title>
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-      background: #111;
-      min-height: 100vh;
-      padding: 28px 20px 60px;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Creaitors · Team Stats</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Inter',-apple-system,sans-serif;padding:16px;transition:background 0.3s;background:#191919;color:#e8e8e8;}
 
-    .top {
-      display: flex; align-items: center; justify-content: space-between;
-      margin-bottom: 20px;
-    }
-    .brand { font-size: 11px; font-weight: 700; letter-spacing: 1.5px; color: #333; text-transform: uppercase; }
-    .refresh { background: none; border: none; color: #333; cursor: pointer; font-size: 16px; padding: 4px 8px; }
-    .refresh:hover { color: #888; }
-    .spin { animation: spin .7s linear infinite; display: inline-block; }
-    @keyframes spin { to { transform: rotate(360deg); } }
+.top-bar{display:flex;align-items:center;margin-bottom:14px;gap:8px;}
+.top-right{display:flex;gap:6px;margin-left:auto;}
+.ctrl-btn{font-family:'Inter',sans-serif;font-size:11px;font-weight:600;padding:6px 12px;border-radius:6px;cursor:pointer;transition:all 0.2s;letter-spacing:0.3px;background:#2A2A2A;border:1px solid rgba(255,255,255,0.12);color:rgba(255,255,255,0.5);}
+.ctrl-btn:hover{border-color:rgba(255,255,255,0.25);color:rgba(255,255,255,0.8);}
 
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 10px;
-    }
-    @media (max-width: 1000px) { .grid { grid-template-columns: repeat(3, 1fr); } }
-    @media (max-width: 700px)  { .grid { grid-template-columns: repeat(2, 1fr); } }
-    @media (max-width: 420px)  { .grid { grid-template-columns: 1fr; } }
+/* Employee cards grid */
+.emp-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
+@media(max-width:900px){.emp-grid{grid-template-columns:repeat(2,1fr);}}
+@media(max-width:520px){.emp-grid{grid-template-columns:1fr;}}
 
-    /* ── The box — matches screenshot exactly ── */
-    .box {
-      background: #1c1c24;
-      border-radius: 10px;
-      padding: 20px 18px 16px;
-      position: relative;
-      min-height: 110px;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-    }
+.emp-card{background:linear-gradient(145deg,#1E1E1E,#252525);border:1px solid rgba(255,255,255,0.06);box-shadow:0 1px 3px rgba(0,0,0,0.3),0 4px 12px rgba(0,0,0,0.15);border-radius:14px;padding:20px;transition:all 0.25s ease;}
+.emp-card:hover{border-color:rgba(255,255,255,0.12);box-shadow:0 2px 6px rgba(0,0,0,0.4),0 8px 20px rgba(0,0,0,0.2);}
 
-    .box-top { display: flex; align-items: flex-start; justify-content: space-between; }
+/* Card header */
+.emp-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+.emp-name{font-size:14px;font-weight:700;color:#e8e8e8;letter-spacing:-0.2px;}
+.emp-role{font-size:10px;color:#606060;margin-top:2px;}
+.status-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.status-dot.active{background:#4ade80;box-shadow:0 0 6px rgba(74,222,128,0.5);}
+.status-dot.inactive{background:#f87171;}
+.status-dot.leave{background:#fbbf24;box-shadow:0 0 6px rgba(251,191,36,0.5);}
 
-    .box-label {
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: 1.2px;
-      text-transform: uppercase;
-      color: #555;
-      line-height: 1.3;
-      max-width: 80%;
-    }
+/* Stats mini grid inside each card */
+.stat-mini{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.mini-item{display:flex;flex-direction:column;gap:2px;}
+.mini-val{font-size:24px;font-weight:800;line-height:1;letter-spacing:-1px;}
+.mini-label{font-size:9.5px;font-weight:600;text-transform:uppercase;letter-spacing:0.6px;color:#555;}
 
-    .dot {
-      width: 7px; height: 7px;
-      border-radius: 50%;
-      margin-top: 3px;
-      flex-shrink: 0;
-    }
-    .dot.active   { background: #4ade80; box-shadow: 0 0 5px #4ade8088; }
-    .dot.inactive { background: #f87171; }
-    .dot.leave    { background: #fbbf24; box-shadow: 0 0 5px #fbbf2488; }
+.mini-val.green{color:#4ade80;}
+.mini-val.teal{color:#2dd4bf;}
+.mini-val.amber{color:#fbbf24;}
+.mini-val.purple{color:#c084fc;}
+.mini-val.blue{color:#60a5fa;}
+.mini-val.red{color:#f87171;}
 
-    .box-value {
-      font-size: 36px;
-      font-weight: 700;
-      line-height: 1;
-      margin: 10px 0 6px;
-      letter-spacing: -1px;
-    }
-    .box-value.teal   { color: #2dd4bf; }
-    .box-value.green  { color: #4ade80; }
-    .box-value.yellow { color: #fbbf24; }
-    .box-value.blue   { color: #60a5fa; }
-    .box-value.purple { color: #c084fc; }
-    .box-value.red    { color: #f87171; }
-    .box-value.muted  { color: #333; }
+/* Alert badges (overdue, due today) */
+.alert-row{display:flex;gap:6px;margin-top:12px;flex-wrap:wrap;}
+.alert-badge{font-size:10px;font-weight:600;padding:3px 8px;border-radius:5px;}
+.alert-badge.overdue{background:rgba(248,113,113,0.15);color:#F87171;}
+.alert-badge.due-today{background:rgba(96,165,250,0.15);color:#60A5FA;}
 
-    .box-sub {
-      font-size: 11px;
-      color: #3a3a3a;
-    }
+/* Empty state card */
+.emp-empty{font-size:12px;color:#3a3a3a;font-style:italic;}
 
-    /* empty state */
-    .box-empty {
-      font-size: 11px;
-      color: #2e2e2e;
-      margin: 10px 0 6px;
-    }
+/* Loading */
+.loading{display:flex;align-items:center;justify-content:center;height:100px;flex-direction:column;gap:10px;}
+.spinner{width:20px;height:20px;border:2px solid rgba(128,128,128,0.15);border-top-color:#666;border-radius:50%;animation:spin 0.8s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
 
-    /* loading */
-    .loading {
-      grid-column: 1/-1;
-      display: flex; align-items: center; justify-content: center;
-      gap: 10px; color: #333; padding: 80px; font-size: 12px;
-    }
-    .loader {
-      width: 18px; height: 18px;
-      border: 2px solid #222; border-top-color: #555;
-      border-radius: 50%; animation: spin .8s linear infinite;
-    }
+#lbar{position:fixed;top:0;left:0;right:0;height:2px;z-index:9999;pointer-events:none;background:transparent;}
+#lbar.on{background:linear-gradient(90deg,#60A5FA,#2DD4BF,#A78BFA);animation:lbar-anim 1.2s ease-in-out infinite;}
+@keyframes lbar-anim{0%{opacity:1;transform:scaleX(0);transform-origin:left}60%{opacity:1;transform:scaleX(0.85);transform-origin:left}100%{opacity:0;transform:scaleX(1);transform-origin:left}}
 
-    .ts { font-size: 10px; color: #252525; text-align: right; margin-top: 10px; }
-  </style>
+.ts{font-size:10px;color:#303030;text-align:right;margin-top:12px;}
+
+/* ====== LIGHT MODE ====== */
+body.light{background:#f5f5f5;color:#111;}
+body.light .ctrl-btn{background:#e8e8e8;border-color:rgba(0,0,0,0.08);color:rgba(0,0,0,0.4);}
+body.light .ctrl-btn:hover{border-color:rgba(0,0,0,0.15);color:rgba(0,0,0,0.6);}
+body.light .emp-card{background:linear-gradient(145deg,#fff,#F7F8FA);border-color:rgba(0,0,0,0.06);box-shadow:0 1px 3px rgba(0,0,0,0.04),0 4px 12px rgba(0,0,0,0.03);}
+body.light .emp-card:hover{border-color:rgba(0,0,0,0.1);}
+body.light .emp-name{color:#111;}
+body.light .emp-role{color:#999;}
+body.light .mini-label{color:#999;}
+body.light .mini-val.green{color:#059669;}
+body.light .mini-val.teal{color:#0D9488;}
+body.light .mini-val.amber{color:#D97706;}
+body.light .mini-val.purple{color:#7C3AED;}
+body.light .mini-val.blue{color:#2563EB;}
+body.light .mini-val.red{color:#DC2626;}
+body.light .ts{color:#ccc;}
+</style>
 </head>
 <body>
-
-<div class="top">
-  <span class="brand">Team Stats</span>
-  <button class="refresh" onclick="load()"><span id="ri">↻</span></button>
-</div>
-
-<div class="grid" id="grid">
-  <div class="loading"><div class="loader"></div> Loading…</div>
+<div id="lbar"></div>
+<div id="dashboard">
+<div class="loading"><div class="spinner"></div><div style="font-size:13px;color:#999;">Loading team stats...</div></div>
 </div>
 <div class="ts" id="ts"></div>
 
 <script>
-  const dotCls = s => s === 'Active' ? 'active' : s === 'Inactive' ? 'inactive' : 'leave';
+(function(){try{if(localStorage.getItem('team-stats-theme')==='light')document.body.classList.add('light');}catch(e){}})();
 
-  function boxes(emp) {
-    const s = emp.stats;
-    const dc = dotCls(emp.status);
-    const role = [emp.role, emp.dept].filter(Boolean).join(' · ') || '—';
+function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 
-    if (s.total === 0) {
-      return `
-        <div class="box">
-          <div class="box-top">
-            <div class="box-label">${emp.name}</div>
-            <div class="dot ${dc}"></div>
-          </div>
-          <div class="box-empty">No tasks assigned yet</div>
-          <div class="box-sub">${role}</div>
-        </div>`;
-    }
+function dotCls(s){return s==='Active'?'active':s==='Inactive'?'inactive':'leave';}
 
-    // Each employee gets 4 stat boxes side-by-side
-    const cards = [
-      { label: emp.name, val: s.done,       color: 'green',  sub: 'Tasks done',    dot: dc },
-      { label: emp.name, val: s.inProgress, color: 'teal',   sub: 'In progress',   dot: dc },
-      { label: emp.name, val: s.pendingQC,  color: 'yellow', sub: 'Pending QC',    dot: dc },
-      { label: emp.name, val: s.totalHrs + 'h', color: 'purple', sub: 'Hours worked', dot: dc },
-    ];
+function renderCard(emp){
+  var s=emp.stats;
+  var dc=dotCls(emp.status);
+  var role=[emp.role,emp.dept].filter(Boolean).join(' · ')||'';
 
-    return cards.map(c => `
-      <div class="box">
-        <div class="box-top">
-          <div class="box-label">${c.label}</div>
-          <div class="dot ${c.dot}"></div>
-        </div>
-        <div class="box-value ${c.color}">${c.val}</div>
-        <div class="box-sub">${c.sub}</div>
-      </div>`).join('');
+  if(s.total===0){
+    return '<div class="emp-card">'+
+      '<div class="emp-header"><div><div class="emp-name">'+esc(emp.name)+'</div>'+(role?'<div class="emp-role">'+esc(role)+'</div>':'')+'</div><div class="status-dot '+dc+'"></div></div>'+
+      '<div class="emp-empty">No tasks assigned yet</div>'+
+      '</div>';
   }
 
-  async function load() {
-    const ri = document.getElementById('ri');
-    ri.classList.add('spin');
-    try {
-      const res = await fetch('/api/employee-stats');
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const data = await res.json();
-
-      if (!data.employees.length) {
-        document.getElementById('grid').innerHTML =
-          `<div class="loading" style="color:#f87171">Share Employee Hub with the integration to see stats.</div>`;
-      } else {
-        document.getElementById('grid').innerHTML = data.employees.map(boxes).join('');
-      }
-
-      const d = new Date(data.generatedAt);
-      document.getElementById('ts').textContent = `Updated ${d.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}`;
-    } catch(e) {
-      document.getElementById('grid').innerHTML =
-        `<div class="loading" style="color:#f87171">Error: ${e.message}</div>`;
-    }
-    ri.classList.remove('spin');
+  var alerts='';
+  if(s.overdue>0||s.dueToday>0){
+    alerts='<div class="alert-row">';
+    if(s.overdue>0) alerts+='<span class="alert-badge overdue">'+s.overdue+' overdue</span>';
+    if(s.dueToday>0) alerts+='<span class="alert-badge due-today">'+s.dueToday+' due today</span>';
+    alerts+='</div>';
   }
 
-  load();
-  setInterval(load, 120000);
+  return '<div class="emp-card">'+
+    '<div class="emp-header"><div><div class="emp-name">'+esc(emp.name)+'</div>'+(role?'<div class="emp-role">'+esc(role)+'</div>':'')+'</div><div class="status-dot '+dc+'"></div></div>'+
+    '<div class="stat-mini">'+
+      '<div class="mini-item"><div class="mini-val green">'+s.done+'</div><div class="mini-label">Done</div></div>'+
+      '<div class="mini-item"><div class="mini-val teal">'+s.inProgress+'</div><div class="mini-label">In Progress</div></div>'+
+      '<div class="mini-item"><div class="mini-val amber">'+s.pendingQC+'</div><div class="mini-label">Pending QC</div></div>'+
+      '<div class="mini-item"><div class="mini-val purple">'+s.totalHrs+'h</div><div class="mini-label">Hours</div></div>'+
+    '</div>'+
+    alerts+
+    '</div>';
+}
+
+function render(data){
+  var isLight=document.body.classList.contains('light');
+  if(!data.employees||!data.employees.length){
+    document.getElementById('dashboard').innerHTML='<div class="loading" style="color:#f87171;">Share Employee Hub with the integration to see stats.</div>';
+    return;
+  }
+  var html='<div class="top-bar"><div class="top-right">'+
+    '<button class="ctrl-btn" onclick="toggleMode()">'+(isLight?'Dark mode':'Light mode')+'</button>'+
+    '<button class="ctrl-btn" onclick="loadData()">Refresh</button>'+
+    '</div></div>'+
+    '<div class="emp-grid">';
+  for(var i=0;i<data.employees.length;i++){
+    html+=renderCard(data.employees[i]);
+  }
+  html+='</div>';
+  document.getElementById('dashboard').innerHTML=html;
+
+  if(data.generatedAt){
+    var d=new Date(data.generatedAt);
+    document.getElementById('ts').textContent='Updated '+d.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+  }
+}
+
+var _lastData=null;
+function _lbarOn(){var b=document.getElementById('lbar');if(b)b.classList.add('on');}
+function _lbarOff(){var b=document.getElementById('lbar');if(b)b.classList.remove('on');}
+
+async function loadData(){
+  _lbarOn();
+  try{
+    var res=await fetch('/api/employee-stats');
+    if(!res.ok)throw new Error('HTTP '+res.status);
+    _lastData=await res.json();
+    _lbarOff();
+    render(_lastData);
+  }catch(err){
+    document.getElementById('dashboard').innerHTML='<div class="loading"><div style="font-size:13px;color:#EF4444;font-weight:600;">Could not load data</div><div style="font-size:11px;color:#666;margin-top:6px;">'+esc(err.message)+'</div></div>';
+  }
+}
+
+window.toggleMode=function(){
+  var isLight=document.body.classList.toggle('light');
+  try{localStorage.setItem('team-stats-theme',isLight?'light':'dark');}catch(e){}
+  if(_lastData){_lbarOff();render(_lastData);}
+};
+
+loadData();
+setInterval(loadData,60000);
+document.addEventListener('visibilitychange',function(){if(!document.hidden)loadData();});
 </script>
 </body>
 </html>
