@@ -68,7 +68,7 @@ module.exports = async function handler(req, res) {
         or: [
           { property: 'Content Status', status: { equals: 'Revision Needed' } },
           { property: 'Content Status', status: { equals: 'Final QC Review' } },
-          { property: 'Content Status', status: { equals: 'In-Production' } },
+          { property: 'Content Status', status: { equals: 'In Production' } },
           { property: 'Content Status', status: { equals: 'Pre-Production' } },
         ],
       }),
