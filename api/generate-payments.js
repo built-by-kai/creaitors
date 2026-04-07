@@ -127,8 +127,8 @@ module.exports = async function handler(req, res) {
           'Payment #': { number: payNum },
           'Total Months': { number: totalMonths },
           'Status': { status: { name: 'Not Paid' } },
-          'Retainer Payment Status': { status: { name: 'Not Paid' } },
-          'KOL Payment Status': { status: { name: 'Not Paid' } },
+          'Retainer Payment': { status: { name: 'Not Paid' } },
+          'KOL Payment': { status: { name: 'Not Paid' } },
         },
       }};
     });
