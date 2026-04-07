@@ -98,64 +98,50 @@ module.exports = async function handler(req, res) {
       cursor.setMonth(cursor.getMonth() + 1);
     }
 
-    // Create one Client Payments row per month
+    // Create all Client Payments rows in parallel (batches of 5 to respect Notion rate limits)
     const created = [];
     const errors  = [];
-
     const totalMonths = months.length;
 
-    for (let i = 0; i < months.length; i++) {
-      const month   = months[i];
+    // Build all page payloads first
+    const payloads = months.map((month, i) => {
       const payNum  = i + 1;
       const label   = `${MONTH_NAMES[month.getMonth()]} ${month.getFullYear()}`;
       const rowName = `${clientName} – ${label}`;
       const dateStr = `${month.getFullYear()}-${String(month.getMonth() + 1).padStart(2, '0')}-01`;
+      return { label, body: {
+        parent: { database_id: CLIENT_PAYMENTS_DB_ID },
+        icon: { type: 'emoji', emoji: '💰' },
+        properties: {
+          'Payment Record': { title: [{ text: { content: rowName } }] },
+          'Billing Month': { date: { start: dateStr } },
+          'Client': { relation: [{ id: clientPageId }] },
+          'Payment #': { number: payNum },
+          'Total Months': { number: totalMonths },
+          'Status': { status: { name: 'Not Paid' } },
+          'Retainer Payment Status': { status: { name: 'Not Paid' } },
+          'KOL Payment Status': { status: { name: 'Not Paid' } },
+        },
+      }};
+    });
 
-      try {
-        const createRes = await fetch('https://api.notion.com/v1/pages', {
-          method: 'POST',
-          headers,
-          body: JSON.stringify({
-            parent: { database_id: CLIENT_PAYMENTS_DB_ID },
-            icon: { type: 'emoji', emoji: '💰' },
-            properties: {
-              'Payment Record': {
-                title: [{ text: { content: rowName } }],
-              },
-              'Billing Month': {
-                date: { start: dateStr },
-              },
-              'Client': {
-                relation: [{ id: clientPageId }],
-              },
-              'Payment #': {
-                number: payNum,
-              },
-              'Total Months': {
-                number: totalMonths,
-              },
-              'Status': {
-                status: { name: 'Not Paid' },
-              },
-              'Retainer Payment Status': {
-                status: { name: 'Not Paid' },
-              },
-              'KOL Payment Status': {
-                status: { name: 'Not Paid' },
-              },
-            },
-          }),
-        });
-
-        if (!createRes.ok) {
-          const errBody = await createRes.text();
-          errors.push({ month: label, error: errBody });
-        } else {
-          const createdPage = await createRes.json();
-          created.push({ month: label, id: createdPage.id });
-        }
-      } catch (err) {
-        errors.push({ month: label, error: err.message });
+    // Fire in batches of 5
+    const BATCH = 5;
+    for (let b = 0; b < payloads.length; b += BATCH) {
+      const batch = payloads.slice(b, b + BATCH);
+      const results = await Promise.allSettled(
+        batch.map(async ({ label, body }) => {
+          const r = await fetch('https://api.notion.com/v1/pages', {
+            method: 'POST', headers, body: JSON.stringify(body),
+          });
+          if (!r.ok) throw new Error(await r.text());
+          const page = await r.json();
+          return { label, id: page.id };
+        })
+      );
+      for (const r of results) {
+        if (r.status === 'fulfilled') created.push(r.value);
+        else errors.push({ error: r.reason?.message });
       }
     }
 
