@@ -7,8 +7,12 @@
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
-html,body{height:100%;}
-body{font-family:'Inter',-apple-system,sans-serif;padding:16px;transition:background 0.3s;-webkit-font-smoothing:antialiased;}
+html,body{height:100%;overflow:hidden;}
+body{font-family:'Inter',-apple-system,sans-serif;padding:16px;transition:background 0.3s;-webkit-font-smoothing:antialiased;display:flex;flex-direction:column;}
+#root{flex:1;overflow-y:auto;padding-right:4px;}
+#root::-webkit-scrollbar{width:4px;}
+#root::-webkit-scrollbar-track{background:transparent;}
+#root::-webkit-scrollbar-thumb{background:#2e2e2e;border-radius:3px;}
 
 /* Dark (default) */
 body{background:#191919;color:#e8e8e8;}
@@ -126,6 +130,7 @@ body.light .badge-qc-task{background:rgba(13,148,136,0.08);color:#0F766E;}
 body.light .empty-text{color:#059669;}
 body.light .empty-sub{color:#bbb;}
 body.light .scroll-area::-webkit-scrollbar-thumb{background:#e0e0e0;}
+body.light #root::-webkit-scrollbar-thumb{background:#e0e0e0;}
 
 @media(max-width:600px){
   body{padding:10px;}
