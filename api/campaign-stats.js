@@ -19,7 +19,6 @@ module.exports = async function handler(req, res) {
       'Content-Type': 'application/json',
     };
 
-    // Paginated query helper
     async function queryAll(dbId, filter) {
       let all = [], hasMore = true, cursor;
       while (hasMore) {
@@ -38,18 +37,25 @@ module.exports = async function handler(req, res) {
       return all;
     }
 
-    // Property helpers
-    const getTitle  = p => p?.type === 'title' ? (p.title || []).map(t => t.plain_text).join('') : '';
-    const getStatus = p => p?.type === 'status' ? p.status?.name : null;
-    const getNumber = p => p?.type === 'number' ? (p.number || 0) : 0;
-    const getSelect = p => p?.type === 'select' ? p.select?.name : null;
-    const getFormula = p => {
-      if (!p || p.type !== 'formula') return 0;
-      const f = p.formula;
-      if (f.type === 'number') return f.number || 0;
-      if (f.type === 'string') return parseFloat(f.string) || 0;
-      return 0;
+    const getTitle     = p => p?.type === 'title' ? (p.title || []).map(t => t.plain_text).join('') : '';
+    const getStatus    = p => p?.type === 'status' ? p.status?.name : null;
+    const getNumber    = p => p?.type === 'number' ? (p.number || 0) : 0;
+    const getSelect    = p => p?.type === 'select' ? p.select?.name : null;
+    const getDate      = p => p?.type === 'date' ? (p.date?.start || null) : null;
+
+    const getRollupText = p => {
+      if (!p || p.type !== 'rollup') return '';
+      const r = p.rollup;
+      if (r.type === 'array') {
+        return (r.array || []).map(item => {
+          if (item.type === 'title') return (item.title || []).map(t => t.plain_text).join('');
+          if (item.type === 'rich_text') return (item.rich_text || []).map(t => t.plain_text).join('');
+          return '';
+        }).filter(Boolean).join(', ');
+      }
+      return '';
     };
+
     const getRollupNumber = p => {
       if (!p || p.type !== 'rollup') return 0;
       const r = p.rollup;
@@ -69,7 +75,6 @@ module.exports = async function handler(req, res) {
       return 0;
     };
 
-    // Query all campaigns
     const campaigns = await queryAll(CAMPAIGNS_DB_ID);
 
     let activeCampaigns = 0;
@@ -78,44 +83,43 @@ module.exports = async function handler(req, res) {
     const typeCounts = {};
     const completionRates = [];
 
-    // Per-deliverable-type totals
     let videosPlanned = 0, videosCompleted = 0;
     let postersPlanned = 0, postersCompleted = 0;
     let livePlanned = 0, liveCompleted = 0;
     let kolPlanned = 0, kolCompleted = 0;
 
-    // Live session metrics (from Weekly Sessions rollups)
     let totalLiveGMV = 0, totalLiveHours = 0, totalLiveOrders = 0;
     let totalLiveSessions = 0;
     let totalTikTokSales = 0, totalShopeeSales = 0;
 
-    // Per-campaign detail for the breakdown
     const campaignDetails = [];
 
     for (const page of campaigns) {
       const props = page.properties;
       const status = getStatus(props['Campaign Status']);
-      const type = getSelect(props['Campaign Type']);
-      const name = getTitle(props['Campaign Name']);
+      const type   = getSelect(props['Campaign Type']);
+      const name   = getTitle(props['Campaign Name']);
 
-      // Only count active campaigns
       if (status !== 'Active') continue;
 
       activeCampaigns++;
+      if (type) typeCounts[type] = (typeCounts[type] || 0) + 1;
 
-      // Count by type
-      if (type) {
-        typeCounts[type] = (typeCounts[type] || 0) + 1;
-      }
+      // Client name from rollup
+      const client = getRollupText(props['Client']) || null;
 
-      // Deliverables — planned
-      const videos    = getNumber(props['Videos']);
-      const posters   = getNumber(props['Posters']);
-      const live      = getNumber(props['Live Session']);
-      const kolPosts  = getNumber(props['KOL Posts']);
-      const planned   = videos + posters + live + kolPosts;
+      // Dates
+      const startDate = getDate(props['Start Date']);
+      const endDate   = getDate(props['End Date']);
 
-      // Deliverables — completed (rollups)
+      // Planned
+      const videos   = getNumber(props['Videos']);
+      const posters  = getNumber(props['Posters']);
+      const live     = getNumber(props['Live Session']);
+      const kolPosts = getNumber(props['KOL Posts']);
+      const planned  = videos + posters + live + kolPosts;
+
+      // Completed
       const videosDone  = getRollupNumber(props['Videos Completed']);
       const postersDone = getRollupNumber(props['Posters Completed']);
       const liveDone    = getRollupNumber(props['Livestreams Completed']);
@@ -130,25 +134,28 @@ module.exports = async function handler(req, res) {
       livePlanned += live;       liveCompleted += liveDone;
       kolPlanned += kolPosts;    kolCompleted += kolDone;
 
-      // Aggregate live session metrics from Monthly rollups
-      totalLiveGMV      += getRollupNumber(props['Monthly Live GMV']);
-      totalLiveHours    += getRollupNumber(props['Monthly Live Hours']);
-      totalLiveOrders   += getRollupNumber(props['Monthly Live Orders']);
-      totalLiveSessions += getRollupNumber(props['Monthly Live Sessions']);
-      totalTikTokSales  += getRollupNumber(props['Monthly TikTok Sales']);
-      totalShopeeSales  += getRollupNumber(props['Monthly Shopee Sales']);
+      totalLiveGMV      += getRollupNumber(props['Overall Live GMV']);
+      totalLiveHours    += getRollupNumber(props['Overall Live Hours']);
+      totalLiveOrders   += getRollupNumber(props['Overall Live Orders']);
+      totalLiveSessions += getRollupNumber(props['Overall Live Sessions']);
 
-      if (planned > 0) {
-        completionRates.push(Math.round((done / planned) * 100));
-      }
+      if (planned > 0) completionRates.push(Math.round((done / planned) * 100));
 
-      // Campaign detail row
       campaignDetails.push({
         name,
         type: type || 'N/A',
+        client,
+        startDate,
+        endDate,
         planned,
         done,
         pct: planned > 0 ? Math.round((done / planned) * 100) : 0,
+        contentBreakdown: {
+          videos:  { planned: videos,   completed: videosDone },
+          posters: { planned: posters,  completed: postersDone },
+          live:    { planned: live,     completed: liveDone },
+          kol:     { planned: kolPosts, completed: kolDone },
+        },
       });
     }
 
@@ -156,9 +163,6 @@ module.exports = async function handler(req, res) {
       ? Math.round(completionRates.reduce((a, b) => a + b, 0) / completionRates.length)
       : 0;
 
-    const typeBreakdown = Object.entries(typeCounts).map(([name, count]) => ({ name, count }));
-
-    // Sort campaigns by completion % ascending (least done first)
     campaignDetails.sort((a, b) => a.pct - b.pct);
 
     return res.status(200).json({
@@ -178,11 +182,9 @@ module.exports = async function handler(req, res) {
         totalHours: totalLiveHours,
         totalOrders: totalLiveOrders,
         totalSessions: totalLiveSessions,
-        tikTokSales: totalTikTokSales,
-        shopeeSales: totalShopeeSales,
       },
       campaignDetails,
-      typeBreakdown,
+      typeBreakdown: Object.entries(typeCounts).map(([name, count]) => ({ name, count })),
     });
 
   } catch (err) {
