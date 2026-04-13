@@ -112,11 +112,11 @@ module.exports = async function handler(req, res) {
           headers,
           body: JSON.stringify({
             properties: {
-              'Content Status': { status: { name: 'Ready to Post' } },
+              'Content Status': { status: { name: 'Ready for Posting' } },
             },
           }),
         });
-        cascadeResult = { contentStatus: 'Ready to Post', lastTask: true };
+        cascadeResult = { contentStatus: 'Ready for Posting', lastTask: true };
       } else if (nextTask) {
         // Not last task — unlock the next one
         const nextTaskName = nextTask.properties['Task List']?.title?.map(t => t.plain_text).join('') || '';
@@ -138,7 +138,7 @@ module.exports = async function handler(req, res) {
     }
 
     const message = cascadeResult?.lastTask
-      ? `"${taskName}" QC approved ✓ — ready to post. Content moved to Ready to Post.`
+      ? `"${taskName}" QC approved ✓ — ready for posting. Content moved to Ready for Posting.`
       : cascadeResult?.nextTask
         ? `"${taskName}" QC approved ✓ → "${cascadeResult.nextTask}" is now Ready to Work.`
         : `"${taskName}" QC approved and marked ${newTaskStatus}.`;
