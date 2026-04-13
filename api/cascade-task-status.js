@@ -152,7 +152,7 @@ module.exports = async function handler(req, res) {
           headers,
           body: JSON.stringify({
             properties: {
-              'Content Status': { status: { name: 'Ready for Posting' } },
+              'Content Status': { status: { name: 'Done' } },
             },
           }),
         });
@@ -167,7 +167,7 @@ module.exports = async function handler(req, res) {
         currentOrder,
         doneAt: now,
         durationDisplay,
-        contentStatus: 'Ready for Posting',
+        contentStatus: 'Done',
       });
     }
 
