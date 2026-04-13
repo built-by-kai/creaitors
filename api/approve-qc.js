@@ -111,17 +111,17 @@ module.exports = async function handler(req, res) {
               cascadeResult = { nextTask: nextTaskName, order: currentOrder + 1, status: 'Ready to Work' };
             }
           } else {
-            // No next task — this was the last one. Move content to Scheduled / Distribution.
+            // No next task — this was the last one. Move content to Ready to Post.
             await fetch(`https://api.notion.com/v1/pages/${contentProductionId}`, {
               method: 'PATCH',
               headers,
               body: JSON.stringify({
                 properties: {
-                  'Content Status': { status: { name: 'Scheduled / Distribution' } },
+                  'Content Status': { status: { name: 'Ready to Post' } },
                 },
               }),
             });
-            cascadeResult = { contentStatus: 'Scheduled / Distribution', lastTask: true };
+            cascadeResult = { contentStatus: 'Ready to Post', lastTask: true };
           }
         }
       }
@@ -131,7 +131,7 @@ module.exports = async function handler(req, res) {
     }
 
     const message = cascadeResult?.lastTask
-      ? `"${taskName}" QC approved ✓ — all tasks complete. Content moved to Scheduled / Distribution.`
+      ? `"${taskName}" QC approved ✓ — all tasks complete. Content moved to Ready to Post.`
       : cascadeResult?.nextTask
         ? `"${taskName}" QC approved ✓ → "${cascadeResult.nextTask}" is now Ready to Work.`
         : `"${taskName}" QC approved and marked Done.`;
